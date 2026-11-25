@@ -32,15 +32,14 @@
     line-height: 1.4;
   }
 
+  /* 🌟 ALTERAÇÃO AQUI: Mudamos para 1 coluna para o botão ficar largo */
   .acoes {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1fr; 
     gap: 10px;
     margin-bottom: 16px;
   }
-  @media (max-width: 380px) {
-    .acoes { grid-template-columns: 1fr; }
-  }
+  
   .btn-acao {
     display: flex; flex-direction: column; align-items: center; justify-content: center;
     gap: 4px;
@@ -50,19 +49,19 @@
     background: transparent;
     color: #764ba2;
     cursor: pointer;
-    font-size: clamp(12px, 3.5vw, 14px);
+    font-size: clamp(14px, 4vw, 16px); /* Fonte um pouco maior já que agora ocupa a tela toda */
     font-weight: 600;
     transition: all 0.2s;
     user-select: none;
     -webkit-user-select: none;
-    min-height: 100px;
+    min-height: 120px; /* Altura maior para facilitar o toque */
   }
   .btn-acao:active, .btn-acao:hover {
     background: #f5f0ff;
     border-color: #667eea;
     transform: scale(0.98);
   }
-  .btn-acao .icon { font-size: 32px; line-height: 1; }
+  .btn-acao .icon { font-size: 42px; line-height: 1; margin-bottom: 8px; }
   .btn-acao input { display: none; }
 
   .preview-box {
@@ -144,18 +143,23 @@
 
 <div class="card">
   <h1>📸 Enviar Imagem</h1>
-  <p class="sub">Escolha uma foto da galeria ou tire uma agora. Para Exibir no telão. formatura 5ª Ano 2026  EMEF Professor João Cardoso de Siqueira Primo</p>
+  <p class="sub">Tire uma foto agora. Ela será exibida na apresentação.</p>
 
   <div class="acoes">
+    <!-- 🌟 ALTERAÇÃO AQUI: Botão da Galeria comentado -->
+    <!--
     <label class="btn-acao" for="inputGaleria">
       <span class="icon">🖼️</span>
       <span>Galeria</span>
       <input type="file" id="inputGaleria" accept="image/*">
     </label>
+    -->
 
+    <!-- Botão da Câmera ficou ativo e ocupando todo o espaço -->
     <label class="btn-acao" for="inputCamera">
       <span class="icon">📷</span>
       <span>Tirar Foto</span>
+      <!-- capture="environment" abre a câmera traseira no celular -->
       <input type="file" id="inputCamera" accept="image/*" capture="environment">
     </label>
   </div>
@@ -189,7 +193,8 @@ const LIMITE_BYTES = 900 * 1024;
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-const inputGaleria = document.getElementById('inputGaleria');
+// 🌟 ALTERAÇÃO AQUI: inputGaleria foi removido daqui
+// const inputGaleria = document.getElementById('inputGaleria');
 const inputCamera  = document.getElementById('inputCamera');
 const previewBox   = document.getElementById('previewBox');
 const previewImg   = document.getElementById('previewImg');
@@ -198,11 +203,8 @@ const btnRemover   = document.getElementById('btnRemover');
 const btnEnviar    = document.getElementById('btnEnviar');
 const msg          = document.getElementById('msg');
 
-let selecionado = null; // { file, dataURL, bytes }
+let selecionado = null;
 
-// ============================================================
-// COMPRESSÃO
-// ============================================================
 async function comprimirParaBase64(file) {
   const bitmap = await createImageBitmap(file).catch(async () => {
     return new Promise((resolve, reject) => {
@@ -242,9 +244,6 @@ function formatarTamanho(bytes) {
   return (bytes / 1024 / 1024).toFixed(2) + ' MB';
 }
 
-// ============================================================
-// PROCESSAR SELEÇÃO
-// ============================================================
 async function processarArquivo(file) {
   if (!file) return;
   if (!file.type.startsWith('image/')) {
@@ -275,10 +274,14 @@ async function processarArquivo(file) {
   }
 }
 
+// 🌟 ALTERAÇÃO AQUI: Listener da galeria comentado
+/*
 inputGaleria.addEventListener('change', e => {
   processarArquivo(e.target.files[0]);
   e.target.value = ''; 
 });
+*/
+
 inputCamera.addEventListener('change', e => {
   processarArquivo(e.target.files[0]);
   e.target.value = '';
@@ -292,9 +295,6 @@ btnRemover.addEventListener('click', () => {
   esconderMsg();
 });
 
-// ============================================================
-// ENVIO PARA O FIRESTORE
-// ============================================================
 btnEnviar.addEventListener('click', async () => {
   if (!selecionado) return;
 
@@ -306,7 +306,7 @@ btnEnviar.addEventListener('click', async () => {
       url: selecionado.dataURL,
       nome: selecionado.file.name || 'foto.jpg',
       exibicoes: 0,
-      ativo: true, // 🌟 GARANTE QUE A IMAGEM NASCE ATIVA
+      ativo: true,
       criadoEm: Date.now(),
       tamanho: selecionado.bytes
     });
@@ -325,9 +325,6 @@ btnEnviar.addEventListener('click', async () => {
   }
 });
 
-// ============================================================
-// UI
-// ============================================================
 function mostrarMsg(texto, tipo) {
   msg.textContent = texto;
   msg.className = 'msg ' + tipo;
