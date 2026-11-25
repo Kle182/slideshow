@@ -2,50 +2,187 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<title>Enviar Imagens</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Enviar Imagem</title>
 <link rel="icon" href="data:,">
 <style>
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-  body { font-family: 'Segoe UI', sans-serif; background: linear-gradient(135deg, #667eea, #764ba2); min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px; }
-  .card { background: #fff; border-radius: 20px; padding: 40px; max-width: 500px; width: 100%; box-shadow: 0 20px 60px rgba(0,0,0,0.3); }
-  h1 { color: #333; margin-bottom: 10px; font-size: 24px; }
-  p.sub { color: #888; margin-bottom: 25px; font-size: 14px; }
-  .dropzone { border: 3px dashed #764ba2; border-radius: 15px; padding: 40px 20px; text-align: center; cursor: pointer; transition: all 0.3s; color: #764ba2; }
-  .dropzone:hover, .dropzone.dragover { background: #f5f0ff; border-color: #667eea; }
-  .dropzone input { display: none; }
-  .dropzone .icon { font-size: 48px; margin-bottom: 10px; }
-  .preview { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 20px; }
-  .preview .item { position: relative; }
-  .preview img { width: 100%; height: 80px; object-fit: cover; border-radius: 8px; }
-  .preview .tamanho { position: absolute; bottom: 4px; left: 4px; right: 4px; background: rgba(0,0,0,0.7); color: #fff; font-size: 10px; padding: 2px 4px; border-radius: 4px; text-align: center; }
-  button { width: 100%; padding: 15px; background: linear-gradient(135deg, #667eea, #764ba2); color: #fff; border: none; border-radius: 10px; font-size: 16px; font-weight: bold; cursor: pointer; margin-top: 20px; }
-  button:disabled { opacity: 0.5; cursor: not-allowed; }
-  .msg { margin-top: 15px; padding: 12px; border-radius: 8px; text-align: center; font-size: 14px; display: none; }
-  .msg.ok { background: #d4edda; color: #155724; display: block; }
+  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    min-height: 100vh;
+    min-height: 100dvh; /* melhor para mobile com barra de endereço */
+    display: flex; align-items: center; justify-content: center;
+    padding: 16px;
+    overflow-x: hidden;
+  }
+  .card {
+    background: #fff; border-radius: 20px;
+    padding: 28px 20px;
+    max-width: 480px; width: 100%;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+  }
+  h1 {
+    color: #333; margin-bottom: 6px;
+    font-size: clamp(20px, 5vw, 24px);
+  }
+  p.sub {
+    color: #888; margin-bottom: 20px;
+    font-size: clamp(12px, 3.5vw, 14px);
+    line-height: 1.4;
+  }
+
+  /* Área de ações (2 botões lado a lado no desktop, empilhados no mobile) */
+  .acoes {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+  @media (max-width: 380px) {
+    .acoes { grid-template-columns: 1fr; }
+  }
+  .btn-acao {
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 4px;
+    padding: 18px 10px;
+    border: 3px dashed #764ba2;
+    border-radius: 15px;
+    background: transparent;
+    color: #764ba2;
+    cursor: pointer;
+    font-size: clamp(12px, 3.5vw, 14px);
+    font-weight: 600;
+    transition: all 0.2s;
+    user-select: none;
+    -webkit-user-select: none;
+    min-height: 100px;
+  }
+  .btn-acao:active, .btn-acao:hover {
+    background: #f5f0ff;
+    border-color: #667eea;
+    transform: scale(0.98);
+  }
+  .btn-acao .icon { font-size: 32px; line-height: 1; }
+  .btn-acao input { display: none; }
+
+  /* Preview */
+  .preview-box {
+    margin-top: 6px;
+    border-radius: 12px;
+    overflow: hidden;
+    display: none;
+    position: relative;
+    background: #000;
+  }
+  .preview-box.ativo { display: block; }
+  .preview-box img {
+    width: 100%;
+    max-height: 320px;
+    object-fit: contain;
+    display: block;
+  }
+  .preview-info {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 8px 12px;
+    background: rgba(0,0,0,0.75);
+    color: #fff;
+    font-size: 12px;
+    gap: 8px;
+  }
+  .preview-info .reducao { color: #4ade80; font-weight: 600; }
+  .btn-remover {
+    background: #e74c3c;
+    color: #fff;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 8px;
+    font-size: 12px;
+    cursor: pointer;
+    font-weight: 600;
+  }
+
+  /* Botão principal */
+  .btn-enviar {
+    width: 100%;
+    padding: 16px;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: #fff; border: none;
+    border-radius: 12px;
+    font-size: clamp(15px, 4vw, 16px);
+    font-weight: bold;
+    cursor: pointer;
+    margin-top: 16px;
+    transition: transform 0.2s;
+    min-height: 52px;
+  }
+  .btn-enviar:active { transform: scale(0.98); }
+  .btn-enviar:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  .msg {
+    margin-top: 14px; padding: 12px;
+    border-radius: 10px; text-align: center;
+    font-size: clamp(12px, 3.5vw, 14px);
+    display: none;
+    line-height: 1.4;
+  }
+  .msg.ok  { background: #d4edda; color: #155724; display: block; }
   .msg.err { background: #f8d7da; color: #721c24; display: block; }
-  .progresso { margin-top: 10px; font-size: 12px; color: #666; text-align: center; display: none; }
+  .msg.info{ background: #d1ecf1; color: #0c5460; display: block; }
+
+  /* Spinner */
+  .spinner {
+    display: inline-block;
+    width: 16px; height: 16px;
+    border: 2px solid rgba(255,255,255,0.3);
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    vertical-align: middle;
+    margin-right: 8px;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
 </style>
 </head>
 <body>
+
 <div class="card">
-  <h1>📸 Enviar Imagens</h1>
-  <p class="sub">As imagens são salvas diretamente no banco.</p>
-  <label class="dropzone" id="dropzone">
-    <input type="file" id="fileInput" accept="image/*" multiple>
-    <div class="icon">⬆️</div>
-    <div><strong>Clique ou arraste imagens aqui</strong></div>
-  </label>
-  <div class="preview" id="preview"></div>
-  <button id="btnEnviar" disabled>Enviar para Apresentação</button>
+  <h1>📸 Enviar Imagem</h1>
+  <p class="sub">Escolha uma foto da galeria ou tire uma agora. Ela será exibida 5 vezes e depois removida.</p>
+
+  <!-- Dois botões: galeria e câmera -->
+  <div class="acoes">
+    <label class="btn-acao" for="inputGaleria">
+      <span class="icon">🖼️</span>
+      <span>Galeria</span>
+      <input type="file" id="inputGaleria" accept="image/*">
+    </label>
+
+    <label class="btn-acao" for="inputCamera">
+      <span class="icon">📷</span>
+      <span>Tirar Foto</span>
+      <!-- capture="environment" abre a câmera traseira no celular -->
+      <input type="file" id="inputCamera" accept="image/*" capture="environment">
+    </label>
+  </div>
+
+  <!-- Preview da imagem escolhida -->
+  <div class="preview-box" id="previewBox">
+    <img id="previewImg" alt="Prévia">
+    <div class="preview-info">
+      <span id="previewTamanho"></span>
+      <button class="btn-remover" id="btnRemover" type="button">Remover</button>
+    </div>
+  </div>
+
+  <button class="btn-enviar" id="btnEnviar" disabled>Enviar para Apresentação</button>
   <div class="msg" id="msg"></div>
-  <div class="progresso" id="progresso"></div>
 </div>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
 import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 
-// 🔴 SUA CONFIGURAÇÃO APLICADA AQUI
 const firebaseConfig = {
   apiKey: "AIzaSyAn-4AVHxNfBPFZUXsPMXm1Ac6GBvoCgUc",
   authDomain: "teste-1047e.firebaseapp.com",
@@ -59,15 +196,21 @@ const LIMITE_BYTES = 900 * 1024;
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-const fileInput = document.getElementById('fileInput');
-const dropzone = document.getElementById('dropzone');
-const preview = document.getElementById('preview');
-const btnEnviar = document.getElementById('btnEnviar');
-const msg = document.getElementById('msg');
-const progresso = document.getElementById('progresso');
+const inputGaleria = document.getElementById('inputGaleria');
+const inputCamera  = document.getElementById('inputCamera');
+const previewBox   = document.getElementById('previewBox');
+const previewImg   = document.getElementById('previewImg');
+const previewTam   = document.getElementById('previewTamanho');
+const btnRemover   = document.getElementById('btnRemover');
+const btnEnviar    = document.getElementById('btnEnviar');
+const msg          = document.getElementById('msg');
 
-let arquivosSelecionados = [];
+// Apenas 1 arquivo por vez
+let selecionado = null; // { file, dataURL, bytes }
 
+// ============================================================
+// COMPRESSÃO
+// ============================================================
 async function comprimirParaBase64(file) {
   const bitmap = await createImageBitmap(file).catch(async () => {
     return new Promise((resolve, reject) => {
@@ -85,6 +228,7 @@ async function comprimirParaBase64(file) {
     { maxLado: 640,  qualidade: 0.5 }
   ];
 
+  let ultimo = null;
   for (const t of tentativas) {
     const escala = Math.min(1, t.maxLado / Math.max(bitmap.width, bitmap.height));
     const w = Math.round(bitmap.width * escala);
@@ -94,9 +238,10 @@ async function comprimirParaBase64(file) {
     canvas.getContext('2d').drawImage(bitmap, 0, 0, w, h);
     const dataURL = canvas.toDataURL('image/jpeg', t.qualidade);
     const bytes = Math.ceil((dataURL.length - dataURL.indexOf(',') - 1) * 0.75);
-    if (bytes <= LIMITE_BYTES) return { dataURL, bytes };
+    ultimo = { dataURL, bytes };
+    if (bytes <= LIMITE_BYTES) return ultimo;
   }
-  return { dataURL: canvas.toDataURL('image/jpeg', 0.5), bytes: LIMITE_BYTES };
+  return ultimo;
 }
 
 function formatarTamanho(bytes) {
@@ -105,70 +250,99 @@ function formatarTamanho(bytes) {
   return (bytes / 1024 / 1024).toFixed(2) + ' MB';
 }
 
-async function tratarArquivos(files) {
-  const lista = Array.from(files).filter(f => f.type.startsWith('image/'));
-  if (lista.length === 0) return;
-  mostrarMsg('Comprimindo imagens...', 'ok');
-  btnEnviar.disabled = true;
-  arquivosSelecionados = [];
-  preview.innerHTML = '';
-
-  for (const file of lista) {
-    try {
-      const { dataURL, bytes } = await comprimirParaBase64(file);
-      arquivosSelecionados.push({ file, dataURL, bytes });
-      const item = document.createElement('div');
-      item.className = 'item';
-      const img = document.createElement('img'); img.src = dataURL;
-      const tam = document.createElement('div'); tam.className = 'tamanho';
-      const reducao = file.size > 0 ? Math.round((1 - bytes / file.size) * 100) : 0;
-      tam.textContent = `${formatarTamanho(file.size)} → ${formatarTamanho(bytes)} (-${reducao}%)`;
-      item.appendChild(img); item.appendChild(tam); preview.appendChild(item);
-    } catch (err) { console.error(err); }
+// ============================================================
+// PROCESSAR SELEÇÃO (galeria ou câmera)
+// ============================================================
+async function processarArquivo(file) {
+  if (!file) return;
+  if (!file.type.startsWith('image/')) {
+    mostrarMsg('Apenas imagens são permitidas.', 'err');
+    return;
   }
-  btnEnviar.disabled = arquivosSelecionados.length === 0;
-  if (arquivosSelecionados.length > 0) mostrarMsg(`${arquivosSelecionados.length} imagem(ns) pronta(s).`, 'ok');
-}
 
-fileInput.addEventListener('change', e => tratarArquivos(e.target.files));
-['dragover','dragleave','drop'].forEach(ev => {
-  dropzone.addEventListener(ev, e => { e.preventDefault(); dropzone.classList.toggle('dragover', ev === 'dragover'); });
-});
-dropzone.addEventListener('drop', e => tratarArquivos(e.dataTransfer.files));
+  // Limpa seleção anterior automaticamente
+  selecionado = null;
+  previewBox.classList.remove('ativo');
+  btnEnviar.disabled = true;
 
-btnEnviar.addEventListener('click', async () => {
-  if (arquivosSelecionados.length === 0) return;
-  btnEnviar.disabled = true; btnEnviar.textContent = 'Enviando...';
-  progresso.style.display = 'block';
+  mostrarMsg('Processando imagem...', 'info');
 
   try {
-    let i = 0;
-    for (const item of arquivosSelecionados) {
-      i++; progresso.textContent = `Enviando ${i}/${arquivosSelecionados.length}...`;
-      await addDoc(collection(db, "slides"), {
-        url: item.dataURL,
-        nome: item.file.name,
-        exibicoes: 0,
-        criadoEm: Date.now(),
-        tamanho: item.bytes
-      });
-    }
-    progresso.style.display = 'none';
-    mostrarMsg(`✅ ${arquivosSelecionados.length} imagem(ns) enviada(s)!`, 'ok');
-    arquivosSelecionados = []; preview.innerHTML = ''; fileInput.value = '';
+    const { dataURL, bytes } = await comprimirParaBase64(file);
+    selecionado = { file, dataURL, bytes };
+
+    previewImg.src = dataURL;
+    const reducao = file.size > 0 ? Math.round((1 - bytes / file.size) * 100) : 0;
+    previewTam.innerHTML = `${formatarTamanho(file.size)} → <span class="reducao">${formatarTamanho(bytes)} (-${reducao}%)</span>`;
+    previewBox.classList.add('ativo');
+    btnEnviar.disabled = false;
+
+    esconderMsg();
   } catch (err) {
     console.error(err);
-    progresso.style.display = 'none';
-    mostrarMsg('Erro ao enviar.', 'err');
+    mostrarMsg('Falha ao processar imagem.', 'err');
+  }
+}
+
+inputGaleria.addEventListener('change', e => {
+  processarArquivo(e.target.files[0]);
+  e.target.value = ''; // permite re-selecionar o mesmo arquivo depois
+});
+inputCamera.addEventListener('change', e => {
+  processarArquivo(e.target.files[0]);
+  e.target.value = '';
+});
+
+btnRemover.addEventListener('click', () => {
+  selecionado = null;
+  previewBox.classList.remove('ativo');
+  previewImg.src = '';
+  btnEnviar.disabled = true;
+  esconderMsg();
+});
+
+// ============================================================
+// ENVIO
+// ============================================================
+btnEnviar.addEventListener('click', async () => {
+  if (!selecionado) return;
+
+  btnEnviar.disabled = true;
+  btnEnviar.innerHTML = '<span class="spinner"></span>Enviando...';
+
+  try {
+    await addDoc(collection(db, "slides"), {
+      url: selecionado.dataURL,
+      nome: selecionado.file.name || 'foto.jpg',
+      exibicoes: 0,
+      criadoEm: Date.now(),
+      tamanho: selecionado.bytes
+    });
+
+    mostrarMsg('✅ Imagem enviada! Ela já está na apresentação.', 'ok');
+
+    selecionado = null;
+    previewBox.classList.remove('ativo');
+    previewImg.src = '';
+  } catch (err) {
+    console.error(err);
+    mostrarMsg('Erro ao enviar. Tente novamente.', 'err');
   } finally {
-    btnEnviar.textContent = 'Enviar para Apresentação';
-    btnEnviar.disabled = arquivosSelecionados.length === 0;
+    btnEnviar.innerHTML = 'Enviar para Apresentação';
+    btnEnviar.disabled = !selecionado;
   }
 });
 
+// ============================================================
+// UI
+// ============================================================
 function mostrarMsg(texto, tipo) {
-  msg.textContent = texto; msg.className = 'msg ' + tipo;
-  if (tipo === 'ok' && !texto.includes('Comprimindo')) setTimeout(() => { msg.className = 'msg'; }, 3000);
+  msg.textContent = texto;
+  msg.className = 'msg ' + tipo;
+  if (tipo === 'ok') setTimeout(esconderMsg, 4000);
+}
+function esconderMsg() {
+  msg.className = 'msg';
 }
 </script>
 </body>
