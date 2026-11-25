@@ -11,7 +11,7 @@
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     background: linear-gradient(135deg, #667eea, #764ba2);
     min-height: 100vh;
-    min-height: 100dvh; /* melhor para mobile com barra de endereço */
+    min-height: 100dvh;
     display: flex; align-items: center; justify-content: center;
     padding: 16px;
     overflow-x: hidden;
@@ -32,7 +32,6 @@
     line-height: 1.4;
   }
 
-  /* Área de ações (2 botões lado a lado no desktop, empilhados no mobile) */
   .acoes {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -66,7 +65,6 @@
   .btn-acao .icon { font-size: 32px; line-height: 1; }
   .btn-acao input { display: none; }
 
-  /* Preview */
   .preview-box {
     margin-top: 6px;
     border-radius: 12px;
@@ -102,7 +100,6 @@
     font-weight: 600;
   }
 
-  /* Botão principal */
   .btn-enviar {
     width: 100%;
     padding: 16px;
@@ -130,7 +127,6 @@
   .msg.err { background: #f8d7da; color: #721c24; display: block; }
   .msg.info{ background: #d1ecf1; color: #0c5460; display: block; }
 
-  /* Spinner */
   .spinner {
     display: inline-block;
     width: 16px; height: 16px;
@@ -148,9 +144,8 @@
 
 <div class="card">
   <h1>📸 Enviar Imagem</h1>
-  <p class="sub">Escolha uma foto da galeria ou tire uma agora. Ela será exibida 5 vezes e depois removida.</p>
+  <p class="sub">Escolha uma foto da galeria ou tire uma agora. Para Exibir no telão. formatura 5ª Ano 2026  EMEF Professor João Cardoso de Siqueira Primo</p>
 
-  <!-- Dois botões: galeria e câmera -->
   <div class="acoes">
     <label class="btn-acao" for="inputGaleria">
       <span class="icon">🖼️</span>
@@ -161,12 +156,10 @@
     <label class="btn-acao" for="inputCamera">
       <span class="icon">📷</span>
       <span>Tirar Foto</span>
-      <!-- capture="environment" abre a câmera traseira no celular -->
       <input type="file" id="inputCamera" accept="image/*" capture="environment">
     </label>
   </div>
 
-  <!-- Preview da imagem escolhida -->
   <div class="preview-box" id="previewBox">
     <img id="previewImg" alt="Prévia">
     <div class="preview-info">
@@ -205,7 +198,6 @@ const btnRemover   = document.getElementById('btnRemover');
 const btnEnviar    = document.getElementById('btnEnviar');
 const msg          = document.getElementById('msg');
 
-// Apenas 1 arquivo por vez
 let selecionado = null; // { file, dataURL, bytes }
 
 // ============================================================
@@ -251,7 +243,7 @@ function formatarTamanho(bytes) {
 }
 
 // ============================================================
-// PROCESSAR SELEÇÃO (galeria ou câmera)
+// PROCESSAR SELEÇÃO
 // ============================================================
 async function processarArquivo(file) {
   if (!file) return;
@@ -260,7 +252,6 @@ async function processarArquivo(file) {
     return;
   }
 
-  // Limpa seleção anterior automaticamente
   selecionado = null;
   previewBox.classList.remove('ativo');
   btnEnviar.disabled = true;
@@ -286,7 +277,7 @@ async function processarArquivo(file) {
 
 inputGaleria.addEventListener('change', e => {
   processarArquivo(e.target.files[0]);
-  e.target.value = ''; // permite re-selecionar o mesmo arquivo depois
+  e.target.value = ''; 
 });
 inputCamera.addEventListener('change', e => {
   processarArquivo(e.target.files[0]);
@@ -302,7 +293,7 @@ btnRemover.addEventListener('click', () => {
 });
 
 // ============================================================
-// ENVIO
+// ENVIO PARA O FIRESTORE
 // ============================================================
 btnEnviar.addEventListener('click', async () => {
   if (!selecionado) return;
@@ -315,6 +306,7 @@ btnEnviar.addEventListener('click', async () => {
       url: selecionado.dataURL,
       nome: selecionado.file.name || 'foto.jpg',
       exibicoes: 0,
+      ativo: true, // 🌟 GARANTE QUE A IMAGEM NASCE ATIVA
       criadoEm: Date.now(),
       tamanho: selecionado.bytes
     });

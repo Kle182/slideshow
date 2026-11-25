@@ -2,6 +2,7 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Apresentação de Slides</title>
 <link rel="icon" href="data:,">
 <style>
@@ -11,18 +12,17 @@
   .slide { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; opacity: 0; transition: opacity 1s ease-in-out; }
   .slide.active { opacity: 1; }
   .slide img { max-width: 100%; max-height: 100%; object-fit: contain; }
-  .info { position: absolute; bottom: 20px; right: 20px; color: #fff; font-size: 14px; background: rgba(0,0,0,0.6); padding: 8px 16px; border-radius: 20px; }
 </style>
 </head>
 <body>
+
 <div class="slide-container" id="container"></div>
-<div class="info" id="info">Carregando...</div>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
-import { getFirestore, collection, onSnapshot, doc, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+import { getFirestore, collection, onSnapshot, doc, updateDoc } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 
-// 🔴 SUA CONFIGURAÇÃO APLICADA AQUI
+// 🔴 SUA CONFIGURAÇÃO DO FIREBASE
 const firebaseConfig = {
   apiKey: "AIzaSyAn-4AVHxNfBPFZUXsPMXm1Ac6GBvoCgUc",
   authDomain: "teste-1047e.firebaseapp.com",
@@ -32,15 +32,26 @@ const firebaseConfig = {
   appId: "1:555293840477:web:7cbb643971ebe69954a9b4"
 };
 
+// ============================================================
+// ⚙️ CONFIGURAÇÕES DA APRESENTAÇÃO (ALTERE AQUI)
+// ============================================================
+
+// 1. TEMPO DE EXIBIÇÃO DE CADA FOTO (em milissegundos)
+const TEMPO_POR_SLIDE = 5000; // 5000 = 5 segundos
+
+// 2. QUANTAS VEZES CADA FOTO ENVIADA VAI APARECER
+const MAX_EXIBICOES = 5; 
+
+// 3. IMAGENS FIXAS
 const IMAGENS_FIXAS = [
   "https://picsum.photos/id/1015/1600/900",
   "https://picsum.photos/id/1016/1600/900",
   "https://picsum.photos/id/1018/1600/900"
 ];
 
-const TEMPO_POR_SLIDE = 5000;
-const MAX_EXIBICOES = 5;
-
+// ============================================================
+// LÓGICA DO SISTEMA
+// ============================================================
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
@@ -57,22 +68,26 @@ function montarFila() {
 
 function renderizar() {
   const container = document.getElementById('container');
-  container.innerHTML = ''; slidesDOM = [];
-  if (fila.length === 0) { container.innerHTML = '<div class="empty" style="color:#555;font-size:24px;text-align:center;">Aguardando...</div>'; return; }
+  container.innerHTML = ''; 
+  slidesDOM = [];
+  
+  if (fila.length === 0) { 
+    container.innerHTML = '<div style="color:#555;font-size:24px;text-align:center;">Aguardando...</div>'; 
+    return; 
+  }
+  
   fila.forEach(item => {
     const div = document.createElement('div');
     div.className = 'slide';
     const tag = document.createElement('img');
     tag.src = item.url;
-    div.appendChild(tag); container.appendChild(div); slidesDOM.push(div);
+    div.appendChild(tag); 
+    container.appendChild(div); 
+    slidesDOM.push(div);
   });
+  
   if (indiceAtual >= fila.length) indiceAtual = 0;
   slidesDOM[indiceAtual].classList.add('active');
-  atualizarInfo();
-}
-
-function atualizarInfo() {
-  document.getElementById('info').textContent = `Slide ${indiceAtual + 1}/${fila.length} · ${IMAGENS_FIXAS.length} fixas · ${imagensEnviadas.length} enviadas`;
 }
 
 async function mostrarProximo() {
@@ -81,9 +96,15 @@ async function mostrarProximo() {
 
   if (!atual.fixa) {
     const novas = (atual.exibicoes || 0) + 1;
+    
     if (novas >= MAX_EXIBICOES) {
-      await deleteDoc(doc(db, "slides", atual.id));
-      return;
+      // Em vez de deletar, marcamos como INATIVA. 
+      // Ela fica salva no Firebase mas sai da apresentação.
+      await updateDoc(doc(db, "slides", atual.id), { 
+        exibicoes: novas,
+        ativo: false 
+      });
+      return; // O onSnapshot vai reconstruir a tela e remover ela da fila
     } else {
       await updateDoc(doc(db, "slides", atual.id), { exibicoes: novas });
       atual.exibicoes = novas;
@@ -93,7 +114,6 @@ async function mostrarProximo() {
   slidesDOM[indiceAtual].classList.remove('active');
   indiceAtual = (indiceAtual + 1) % fila.length;
   slidesDOM[indiceAtual].classList.add('active');
-  atualizarInfo();
 }
 
 function iniciarLoop() {
@@ -101,15 +121,25 @@ function iniciarLoop() {
   timer = setInterval(mostrarProximo, TEMPO_POR_SLIDE);
 }
 
+// Escuta em tempo real o banco de dados
 onSnapshot(collection(db, "slides"), (snapshot) => {
-  imagensEnviadas = snapshot.docs.map(d => ({
-    id: d.id, url: d.data().url, exibicoes: d.data().exibicoes || 0
-  }));
+  imagensEnviadas = snapshot.docs
+    .map(d => ({
+      id: d.id, 
+      url: d.data().url, 
+      exibicoes: d.data().exibicoes || 0,
+      ativo: d.data().ativo !== false // Se o campo não existir, assume que é true
+    }))
+    .filter(img => img.ativo); // 🌟 AQUI: ignora as imagens inativas (limite atingido)
+
   const urlAtual = fila[indiceAtual]?.url;
   montarFila();
+  
   const novoIndice = fila.findIndex(i => i.url === urlAtual);
   indiceAtual = novoIndice >= 0 ? novoIndice : 0;
+  
   renderizar();
+  
   if (!timer) iniciarLoop();
 });
 </script>
