@@ -32,14 +32,46 @@
     line-height: 1.4;
   }
 
-  /* 🌟 ALTERAÇÃO AQUI: Mudamos para 1 coluna para o botão ficar largo */
+  /* Painel de limite */
+  .limite-painel {
+    background: #f5f0ff;
+    border-left: 4px solid #764ba2;
+    padding: 12px 14px;
+    border-radius: 10px;
+    margin-bottom: 16px;
+    font-size: 13px;
+    color: #4a2c7a;
+    line-height: 1.5;
+  }
+  .limite-painel .linha {
+    display: flex; justify-content: space-between;
+    align-items: center; margin-bottom: 4px;
+  }
+  .limite-painel .linha:last-child { margin-bottom: 0; }
+  .limite-painel strong { color: #333; }
+  .limite-painel .barra-mini {
+    height: 8px; background: #e0d6f5;
+    border-radius: 4px; overflow: hidden;
+    margin-top: 6px;
+  }
+  .limite-painel .barra-mini > div {
+    height: 100%; width: 0%;
+    background: linear-gradient(90deg, #667eea, #764ba2);
+    transition: width 0.3s;
+  }
+  .limite-painel .aviso {
+    color: #c0392b; font-weight: 600;
+    margin-top: 6px; display: none;
+  }
+  .limite-painel.bloqueado { border-left-color: #e74c3c; background: #fdecea; }
+  .limite-painel.bloqueado .aviso { display: block; }
+
   .acoes {
     display: grid;
-    grid-template-columns: 1fr; 
+    grid-template-columns: 1fr;
     gap: 10px;
     margin-bottom: 16px;
   }
-  
   .btn-acao {
     display: flex; flex-direction: column; align-items: center; justify-content: center;
     gap: 4px;
@@ -49,17 +81,23 @@
     background: transparent;
     color: #764ba2;
     cursor: pointer;
-    font-size: clamp(14px, 4vw, 16px); /* Fonte um pouco maior já que agora ocupa a tela toda */
+    font-size: clamp(14px, 4vw, 16px);
     font-weight: 600;
     transition: all 0.2s;
     user-select: none;
     -webkit-user-select: none;
-    min-height: 120px; /* Altura maior para facilitar o toque */
+    min-height: 120px;
   }
   .btn-acao:active, .btn-acao:hover {
     background: #f5f0ff;
     border-color: #667eea;
     transform: scale(0.98);
+  }
+  .btn-acao:disabled,
+  .btn-acao.bloqueado {
+    opacity: 0.45; cursor: not-allowed;
+    border-color: #ccc; color: #999;
+    transform: none;
   }
   .btn-acao .icon { font-size: 42px; line-height: 1; margin-bottom: 8px; }
   .btn-acao input { display: none; }
@@ -74,40 +112,30 @@
   }
   .preview-box.ativo { display: block; }
   .preview-box img {
-    width: 100%;
-    max-height: 320px;
-    object-fit: contain;
-    display: block;
+    width: 100%; max-height: 320px;
+    object-fit: contain; display: block;
   }
   .preview-info {
     display: flex; justify-content: space-between; align-items: center;
     padding: 8px 12px;
     background: rgba(0,0,0,0.75);
-    color: #fff;
-    font-size: 12px;
-    gap: 8px;
+    color: #fff; font-size: 12px; gap: 8px;
   }
   .preview-info .reducao { color: #4ade80; font-weight: 600; }
   .btn-remover {
-    background: #e74c3c;
-    color: #fff;
-    border: none;
-    padding: 6px 12px;
-    border-radius: 8px;
-    font-size: 12px;
-    cursor: pointer;
-    font-weight: 600;
+    background: #e74c3c; color: #fff;
+    border: none; padding: 6px 12px;
+    border-radius: 8px; font-size: 12px;
+    cursor: pointer; font-weight: 600;
   }
 
   .btn-enviar {
-    width: 100%;
-    padding: 16px;
+    width: 100%; padding: 16px;
     background: linear-gradient(135deg, #667eea, #764ba2);
     color: #fff; border: none;
     border-radius: 12px;
     font-size: clamp(15px, 4vw, 16px);
-    font-weight: bold;
-    cursor: pointer;
+    font-weight: bold; cursor: pointer;
     margin-top: 16px;
     transition: transform 0.2s;
     min-height: 52px;
@@ -119,8 +147,7 @@
     margin-top: 14px; padding: 12px;
     border-radius: 10px; text-align: center;
     font-size: clamp(12px, 3.5vw, 14px);
-    display: none;
-    line-height: 1.4;
+    display: none; line-height: 1.4;
   }
   .msg.ok  { background: #d4edda; color: #155724; display: block; }
   .msg.err { background: #f8d7da; color: #721c24; display: block; }
@@ -143,24 +170,22 @@
 
 <div class="card">
   <h1>📸 Enviar Imagem</h1>
-  <p class="sub">Tire uma foto agora. Ela será exibida na apresentação  Para Exibir no telão. formatura 5ª Ano 2026  EMEF Professor João Cardoso de Siqueira Primo</p>
+  <p class="sub">Tire uma foto agora. Ela será exibida na apresentação. Formatura 5º Ano 2026 — EMEF Professor João Cardoso de Siqueira Primo</p>
 
+  <!-- Painel de limite -->
+  <div class="limite-painel" id="limitePainel">
+    <div class="linha">
+      <span>Fotos enviadas:</span>
+      <strong><span id="qtdEnviadas">0</span> / <span id="qtdLimite">5</span></strong>
+    </div>
+    <div class="barra-mini"><div id="barraLimite"></div></div>
+    <div class="aviso" id="avisoLimite"></div>
+  </div>
 
   <div class="acoes">
-    <!-- 🌟 ALTERAÇÃO AQUI: Botão da Galeria comentado -->
-    <!--
-    <label class="btn-acao" for="inputGaleria">
-      <span class="icon">🖼️</span>
-      <span>Galeria</span>
-      <input type="file" id="inputGaleria" accept="image/*">
-    </label>
-    -->
-
-    <!-- Botão da Câmera ficou ativo e ocupando todo o espaço -->
-    <label class="btn-acao" for="inputCamera">
+    <label class="btn-acao" id="labelCamera" for="inputCamera">
       <span class="icon">📷</span>
-      <span>Tirar Foto</span>
-      <!-- capture="environment" abre a câmera traseira no celular -->
+      <span id="textoBotao">Tirar Foto</span>
       <input type="file" id="inputCamera" accept="image/*" capture="environment">
     </label>
   </div>
@@ -190,13 +215,21 @@ const firebaseConfig = {
   appId: "1:555293840477:web:7cbb643971ebe69954a9b4"
 };
 
-const LIMITE_BYTES = 900 * 1024;
+// ============================================================
+// ⚙️ CONFIGURAÇÕES DO LIMITE (altere aqui se quiser)
+// ============================================================
+const LIMITE_BYTES          = 900 * 1024;   // tamanho máximo do arquivo comprimido
+const MAX_FOTOS_POR_JANELA  = 5;            // quantas fotos cabem na janela
+const JANELA_MS             = 30 * 60 * 1000; // 30 minutos em milissegundos
+const CHAVE_STORAGE         = 'fotos_enviadas_timestamps';
+
+// ============================================================
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-// 🌟 ALTERAÇÃO AQUI: inputGaleria foi removido daqui
-// const inputGaleria = document.getElementById('inputGaleria');
 const inputCamera  = document.getElementById('inputCamera');
+const labelCamera  = document.getElementById('labelCamera');
+const textoBotao   = document.getElementById('textoBotao');
 const previewBox   = document.getElementById('previewBox');
 const previewImg   = document.getElementById('previewImg');
 const previewTam   = document.getElementById('previewTamanho');
@@ -204,8 +237,115 @@ const btnRemover   = document.getElementById('btnRemover');
 const btnEnviar    = document.getElementById('btnEnviar');
 const msg          = document.getElementById('msg');
 
-let selecionado = null;
+const limitePainel = document.getElementById('limitePainel');
+const qtdEnviadas  = document.getElementById('qtdEnviadas');
+const qtdLimite    = document.getElementById('qtdLimite');
+const barraLimite  = document.getElementById('barraLimite');
+const avisoLimite  = document.getElementById('avisoLimite');
 
+let selecionado = null;
+let timerAtualizacao = null;
+
+// ============================================================
+// 🕒 CONTROLE DE LIMITE (localStorage com janela deslizante)
+// ============================================================
+function lerTimestamps() {
+  try {
+    const raw = localStorage.getItem(CHAVE_STORAGE);
+    if (!raw) return [];
+    const arr = JSON.parse(raw);
+    if (!Array.isArray(arr)) return [];
+    return arr.filter(t => typeof t === 'number' && !isNaN(t));
+  } catch {
+    return [];
+  }
+}
+
+function salvarTimestamps(arr) {
+  localStorage.setItem(CHAVE_STORAGE, JSON.stringify(arr));
+}
+
+// Remove timestamps mais antigos que a janela (30 min)
+function timestampsValidos() {
+  const agora = Date.now();
+  const validos = lerTimestamps().filter(t => (agora - t) < JANELA_MS);
+  salvarTimestamps(validos); // limpa lixo
+  return validos;
+}
+
+function podeEnviar() {
+  const validos = timestampsValidos();
+  return validos.length < MAX_FOTOS_POR_JANELA;
+}
+
+// Quanto tempo falta até liberar (em ms). 0 = já pode enviar.
+function tempoParaLiberar() {
+  const validos = timestampsValidos();
+  if (validos.length < MAX_FOTOS_POR_JANELA) return 0;
+  // O mais antigo da janela precisa "expirar"
+  const maisAntigo = Math.min(...validos);
+  return Math.max(0, JANELA_MS - (Date.now() - maisAntigo));
+}
+
+function registrarEnvio() {
+  const validos = timestampsValidos();
+  validos.push(Date.now());
+  salvarTimestamps(validos);
+}
+
+function formatarTempo(ms) {
+  const totalSeg = Math.ceil(ms / 1000);
+  const min = Math.floor(totalSeg / 60);
+  const seg = totalSeg % 60;
+  if (min === 0) return `${seg}s`;
+  if (seg === 0) return `${min}min`;
+  return `${min}min ${seg}s`;
+}
+
+function atualizarPainelLimite() {
+  const validos = timestampsValidos();
+  const usadas = validos.length;
+  const restantes = Math.max(0, MAX_FOTOS_POR_JANELA - usadas);
+
+  qtdEnviadas.textContent = usadas;
+  qtdLimite.textContent = MAX_FOTOS_POR_JANELA;
+  barraLimite.style.width = Math.round((usadas / MAX_FOTOS_POR_JANELA) * 100) + '%';
+
+  const bloqueado = usadas >= MAX_FOTOS_POR_JANELA;
+  limitePainel.classList.toggle('bloqueado', bloqueado);
+
+  // Atualiza UI do botão de câmera
+  if (bloqueado) {
+    const falta = tempoParaLiberar();
+    const textoFalta = formatarTempo(falta);
+    avisoLimite.textContent = `⏳ Limite atingido. Você poderá enviar novamente em ${textoFalta}.`;
+    labelCamera.classList.add('bloqueado');
+    inputCamera.disabled = true;
+    textoBotao.textContent = `Aguarde ${textoFalta}`;
+  } else {
+    avisoLimite.textContent = '';
+    labelCamera.classList.remove('bloqueado');
+    inputCamera.disabled = false;
+    textoBotao.textContent = `Tirar Foto (${restantes} restante${restantes === 1 ? '' : 's'})`;
+  }
+
+  // Atualiza o botão de enviar (se tiver preview)
+  btnEnviar.disabled = !selecionado || bloqueado;
+}
+
+// Atualiza a cada segundo enquanto a aba está visível
+function iniciarTimerLimite() {
+  if (timerAtualizacao) clearInterval(timerAtualizacao);
+  timerAtualizacao = setInterval(() => {
+    if (document.visibilityState === 'visible') {
+      atualizarPainelLimite();
+    }
+  }, 1000);
+}
+
+// ============================================================
+// 🖼️ COMPRESSÃO (igual à versão anterior)
+// ============================================================
 async function comprimirParaBase64(file) {
   const bitmap = await createImageBitmap(file).catch(async () => {
     return new Promise((resolve, reject) => {
@@ -245,8 +385,17 @@ function formatarTamanho(bytes) {
   return (bytes / 1024 / 1024).toFixed(2) + ' MB';
 }
 
+// ============================================================
+// 📷 PROCESSAR ARQUIVO
+// ============================================================
 async function processarArquivo(file) {
   if (!file) return;
+
+  if (!podeEnviar()) {
+    mostrarMsg('Você atingiu o limite de fotos. Aguarde para enviar mais.', 'err');
+    return;
+  }
+
   if (!file.type.startsWith('image/')) {
     mostrarMsg('Apenas imagens são permitidas.', 'err');
     return;
@@ -269,19 +418,12 @@ async function processarArquivo(file) {
     btnEnviar.disabled = false;
 
     esconderMsg();
+    atualizarPainelLimite();
   } catch (err) {
     console.error(err);
     mostrarMsg('Falha ao processar imagem.', 'err');
   }
 }
-
-// 🌟 ALTERAÇÃO AQUI: Listener da galeria comentado
-/*
-inputGaleria.addEventListener('change', e => {
-  processarArquivo(e.target.files[0]);
-  e.target.value = ''; 
-});
-*/
 
 inputCamera.addEventListener('change', e => {
   processarArquivo(e.target.files[0]);
@@ -296,8 +438,18 @@ btnRemover.addEventListener('click', () => {
   esconderMsg();
 });
 
+// ============================================================
+// 📤 ENVIAR
+// ============================================================
 btnEnviar.addEventListener('click', async () => {
   if (!selecionado) return;
+
+  // Recheca o limite no momento do clique (pode ter expirado/atingido)
+  if (!podeEnviar()) {
+    mostrarMsg('Limite atingido. Aguarde para enviar mais.', 'err');
+    atualizarPainelLimite();
+    return;
+  }
 
   btnEnviar.disabled = true;
   btnEnviar.innerHTML = '<span class="spinner"></span>Enviando...';
@@ -312,20 +464,25 @@ btnEnviar.addEventListener('click', async () => {
       tamanho: selecionado.bytes
     });
 
+    // Registra o timestamp local (janela deslizante)
+    registrarEnvio();
+
     mostrarMsg('✅ Imagem enviada! Ela já está na apresentação.', 'ok');
 
     selecionado = null;
     previewBox.classList.remove('ativo');
     previewImg.src = '';
+    atualizarPainelLimite();
   } catch (err) {
     console.error(err);
     mostrarMsg('Erro ao enviar. Tente novamente.', 'err');
   } finally {
     btnEnviar.innerHTML = 'Enviar para Apresentação';
-    btnEnviar.disabled = !selecionado;
+    btnEnviar.disabled = !selecionado || !podeEnviar();
   }
 });
 
+// ============================================================
 function mostrarMsg(texto, tipo) {
   msg.textContent = texto;
   msg.className = 'msg ' + tipo;
@@ -334,8 +491,21 @@ function mostrarMsg(texto, tipo) {
 function esconderMsg() {
   msg.className = 'msg';
 }
+
+// ============================================================
+// 🚀 INICIALIZAÇÃO
+// ============================================================
+atualizarPainelLimite();
+iniciarTimerLimite();
+
+// Quando a aba volta a ficar visível, atualiza na hora
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'visible') {
+    atualizarPainelLimite();
+  }
+});
+
+
 </script>
 </body>
 </html>
-
-
