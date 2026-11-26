@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gerenciar Fotos da Apresentação</title>
+<link rel="icon" href="data:,">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    min-height: 100vh;
+    padding: 16px;
+  }
+  .card {
+    background: #fff; border-radius: 20px;
+    padding: 24px 20px;
+    max-width: 900px; width: 100%;
+    margin: 0 auto;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+  }
+  h1 { color: #333; margin-bottom: 4px; font-size: 22px; }
+  p.sub { color: #888; margin-bottom: 16px; font-size: 13px; line-height: 1.4; }
+
+  .toolbar {
+    display: flex; flex-wrap: wrap; gap: 8px;
+    align-items: center; justify-content: space-between;
+    padding: 12px 14px;
+    background: #f5f0ff;
+    border-radius: 12px;
+    margin-bottom: 14px;
+  }
+  .toolbar .esquerda {
+    display: flex; align-items: center; gap: 10px;
+    font-size: 14px; color: #4a2c7a;
+    flex-wrap: wrap;
+  }
+  .toolbar strong { color: #333; }
+  .toolbar .direita { display: flex; gap: 8px; flex-wrap: wrap; }
+
+  .btn-mini {
+    padding: 8px 12px;
+    border: 1px solid #764ba2;
+    background: #fff;
+    color: #764ba2;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s;
+    min-height: 36px;
+  }
+  .btn-mini:hover { background: #764ba2; color: #fff; }
+  .btn-mini:disabled { opacity: 0.4; cursor: not-allowed; }
+
+  .grade {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 10px;
+    margin-bottom: 16px;
+    max-height: 55vh;
+    overflow-y: auto;
+    padding: 4px;
+  }
+  .foto {
+    position: relative;
+    border-radius: 10px;
+    overflow: hidden;
+    background: #000;
+    aspect-ratio: 4 / 3;
+    border: 3px solid transparent;
+    transition: border-color 0.15s;
+  }
+  .foto img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    display: block;
+    cursor: zoom-in;
+    transition: opacity 0.2s;
+  }
+  .foto:hover img { opacity: 0.85; }
+  .foto.selecionada { border-color: #22c55e; }
+  .foto.inativa img { opacity: 0.4; filter: grayscale(0.6); }
+
+  /* Checkbox de seleção (canto superior esquerdo) */
+  .foto .check {
+    position: absolute;
+    top: 6px; left: 6px;
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    background: rgba(0,0,0,0.55);
+    border: 2px solid #fff;
+    display: flex; align-items: center; justify-content: center;
+    color: transparent;
+    font-size: 16px;
+    font-weight: bold;
+    transition: all 0.15s;
+    cursor: pointer;
+    z-index: 2;
+  }
+  .foto.selecionada .check {
+    background: #22c55e;
+    color: #fff;
+  }
+
+  /* Badge de status (canto inferior direito) */
+  .foto .badge {
+    position: absolute;
+    bottom: 6px; right: 6px;
+    background: rgba(0,0,0,0.7);
+    color: #fff;
+    font-size: 10px;
+    padding: 2px 6px;
+    border-radius: 6px;
+    font-weight: 600;
+    pointer-events: none;
+  }
+  .foto .badge.inativa { background: #dc2626; }
+
+  /* 🌟 Botão de toggle ativa/inativa (canto inferior esquerdo) */
+  .foto .btn-toggle {
+    position: absolute;
+    bottom: 6px; left: 6px;
+    width: 34px; height: 34px;
+    border-radius: 50%;
+    border: 2px solid #fff;
+    background: rgba(34, 197, 94, 0.9);
+    color: #fff;
+    font-size: 16px;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: background 0.15s, transform 0.15s;
+    z-index: 2;
+  }
+  .foto .btn-toggle:hover { transform: scale(1.1); }
+  .foto .btn-toggle:disabled { opacity: 0.5; cursor: wait; }
+  .foto .btn-toggle.inativa { background: rgba(220, 38, 38, 0.9); }
+
+  /* Loading overlay durante toggle */
+  .foto .loading-toggle {
+    position: absolute;
+    inset: 0;
+    background: rgba(0,0,0,0.55);
+    display: flex; align-items: center; justify-content: center;
+    color: #fff; font-size: 12px; font-weight: 600;
+    z-index: 3;
+  }
+  .foto .loading-toggle .spinner {
+    width: 22px; height: 22px;
+    border: 3px solid rgba(255,255,255,0.3);
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+
+  /* Lightbox */
+  .lightbox {
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.92);
+    display: none;
+    align-items: center; justify-content: center;
+    z-index: 1000;
+    padding: 20px;
+  }
+  .lightbox.ativo { display: flex; }
+  .lightbox img {
+    max-width: 95vw; max-height: 90vh;
+    object-fit: contain;
+    border-radius: 8px;
+  }
+  .lightbox .fechar {
+    position: absolute;
+    top: 16px; right: 16px;
+    background: #fff; color: #333;
+    border: none;
+    width: 44px; height: 44px;
+    border-radius: 50%;
+    font-size: 22px;
+    cursor: pointer;
+    font-weight: bold;
+  }
+  .lightbox .nav {
+    position: absolute;
+    top: 50%; transform: translateY(-50%);
+    background: rgba(255,255,255,0.9);
+    color: #333;
+    border: none;
+    width: 48px; height: 48px;
+    border-radius: 50%;
+    font-size: 22px;
+    cursor: pointer;
+    font-weight: bold;
+  }
+  .lightbox .nav.anterior { left: 16px; }
+  .lightbox .nav.proximo  { right: 16px; }
+  .lightbox .contador-lb {
+    position: absolute;
+    bottom: 20px; left: 50%; transform: translateX(-50%);
+    color: #fff; font-size: 14px;
+    background: rgba(0,0,0,0.6);
+    padding: 6px 14px; border-radius: 20px;
+  }
+
+  .btn-baixar {
+    width: 100%;
+    padding: 16px;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: #fff; border: none;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: transform 0.2s, opacity 0.2s;
+    min-height: 52px;
+  }
+  .btn-baixar:active { transform: scale(0.98); }
+  .btn-baixar:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  .barra {
+    width: 100%; height: 10px;
+    background: #eee; border-radius: 5px;
+    overflow: hidden; margin-top: 12px;
+    display: none;
+  }
+  .barra.ativa { display: block; }
+  .barra > div {
+    height: 100%; width: 0%;
+    background: linear-gradient(90deg, #667eea, #764ba2);
+    transition: width 0.2s;
+  }
+  .status {
+    margin-top: 8px; font-size: 13px;
+    color: #666; text-align: center; min-height: 18px;
+  }
+  .msg {
+    margin-top: 12px; padding: 12px;
+    border-radius: 10px; text-align: center;
+    font-size: 14px; display: none; line-height: 1.4;
+  }
+  .msg.ok  { background: #d4edda; color: #155724; display: block; }
+  .msg.err { background: #f8d7da; color: #721c24; display: block; }
+
+  .spinner-inline {
+    display: inline-block;
+    width: 16px; height: 16px;
+    border: 2px solid rgba(255,255,255,0.3);
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    vertical-align: middle;
+    margin-right: 8px;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .vazio {
+    text-align: center; color: #999;
+    padding: 40px 10px; font-size: 14px;
+  }
+</style>
+</head>
+<body>
+
+<div class="card">
+  <h1>🖼️ Gerenciar Fotos</h1>
+  <p class="sub">
+    Toque na foto para ampliar. Use o <strong>✓</strong> para selecionar (ZIP) e o <strong>⏻</strong> para ativar/desativar da apresentação.
+  </p>
+
+  <div class="toolbar">
+    <div class="esquerda">
+      <span>Selecionadas: <strong id="contadorSel">0</strong> / <strong id="contadorTotal">0</strong></span>
+      <span style="color:#888;">|</span>
+      <span>Ativas: <strong id="contadorAtivas" style="color:#22c55e;">0</strong></span>
+    </div>
+    <div class="direita">
+      <button class="btn-mini" id="btnTodas">Marcar todas</button>
+      <button class="btn-mini" id="btnNenhuma">Desmarcar</button>
+    </div>
+  </div>
+
+  <div class="grade" id="grade">
+    <div class="vazio">Carregando fotos...</div>
+  </div>
+
+  <button class="btn-baixar" id="btnBaixar" disabled>Baixar 0 foto(s) em ZIP</button>
+
+  <div class="barra" id="barra"><div id="barraFill"></div></div>
+  <div class="status" id="status"></div>
+  <div class="msg" id="msg"></div>
+</div>
+
+<div class="lightbox" id="lightbox">
+  <button class="fechar" id="lbFechar">✕</button>
+  <button class="nav anterior" id="lbAnterior">‹</button>
+  <img id="lbImg" alt="Foto ampliada">
+  <button class="nav proximo" id="lbProximo">›</button>
+  <div class="contador-lb" id="lbContador"></div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
+import {
+  getFirestore, collection, getDocs, doc, updateDoc, onSnapshot
+} from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyAn-4AVHxNfBPFZUXsPMXm1Ac6GBvoCgUc",
+  authDomain: "teste-1047e.firebaseapp.com",
+  projectId: "teste-1047e",
+  storageBucket: "teste-1047e.firebasestorage.app",
+  messagingSenderId: "555293840477",
+  appId: "1:555293840477:web:7cbb643971ebe69954a9b4"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+const grade       = document.getElementById('grade');
+const btnTodas    = document.getElementById('btnTodas');
+const btnNenhuma  = document.getElementById('btnNenhuma');
+const btnBaixar   = document.getElementById('btnBaixar');
+const contadorSel = document.getElementById('contadorSel');
+const contadorTot = document.getElementById('contadorTotal');
+const contadorAtv = document.getElementById('contadorAtivas');
+const barra       = document.getElementById('barra');
+const barraFill   = document.getElementById('barraFill');
+const statusEl    = document.getElementById('status');
+const msg         = document.getElementById('msg');
+
+const lightbox     = document.getElementById('lightbox');
+const lbImg        = document.getElementById('lbImg');
+const lbFechar     = document.getElementById('lbFechar');
+const lbAnterior   = document.getElementById('lbAnterior');
+const lbProximo    = document.getElementById('lbProximo');
+const lbContador   = document.getElementById('lbContador');
+
+let fotos = [];
+const selecionadas = new Set();
+let indiceLightbox = 0;
+
+// ---------- Carregar fotos em TEMPO REAL ----------
+// Usamos onSnapshot para que mudanças feitas aqui (ou em outra aba) reflitam na hora.
+let primeiraCarga = true;
+
+function iniciarListener() {
+  onSnapshot(collection(db, "slides"), (snapshot) => {
+    const novasFotos = snapshot.docs.map(d => {
+      const data = d.data();
+      return {
+        id: d.id,
+        url: data.url,
+        nome: data.nome || 'foto.jpg',
+        criadoEm: data.criadoEm || 0,
+        exibicoes: data.exibicoes || 0,
+        ativo: data.ativo !== false
+      };
+    });
+    novasFotos.sort((a, b) => a.criadoEm - b.criadoEm);
+
+    // Preserva seleção existente, mas remove ids que sumiram
+    const idsValidos = new Set(novasFotos.map(f => f.id));
+    for (const id of [...selecionadas]) {
+      if (!idsValidos.has(id)) selecionadas.delete(id);
+    }
+
+    // Na primeira carga, pré-seleciona as ativas
+    if (primeiraCarga) {
+      novasFotos.forEach(f => { if (f.ativo) selecionadas.add(f.id); });
+      primeiraCarga = false;
+    }
+
+    fotos = novasFotos;
+    renderizarGrade();
+    atualizarContadores();
+  }, (err) => {
+    console.error(err);
+    grade.innerHTML = '<div class="vazio">Erro ao carregar fotos: ' + err.message + '</div>';
+  });
+}
+
+// ---------- Renderizar grade ----------
+function renderizarGrade() {
+  if (fotos.length === 0) {
+    grade.innerHTML = '<div class="vazio">Nenhuma foto encontrada.</div>';
+    return;
+  }
+
+  // Preserva scroll atual
+  const scrollTop = grade.scrollTop;
+  grade.innerHTML = '';
+
+  fotos.forEach((foto, idx) => {
+    const div = document.createElement('div');
+    div.className = 'foto' +
+      (selecionadas.has(foto.id) ? ' selecionada' : '') +
+      (foto.ativo ? '' : ' inativa');
+    div.dataset.id = foto.id;
+
+    // Cria elementos via DOM (mais seguro que innerHTML com URLs longas)
+    const img = document.createElement('img');
+    img.src = foto.url;
+    img.alt = foto.nome;
+    img.loading = 'lazy';
+    img.addEventListener('click', () => abrirLightbox(idx));
+
+    const check = document.createElement('div');
+    check.className = 'check';
+    check.textContent = '✓';
+    check.title = 'Selecionar para ZIP';
+    check.addEventListener('click', (e) => {
+      e.stopPropagation();
+      alternarSelecao(foto.id);
+    });
+
+    const badge = document.createElement('div');
+    badge.className = 'badge' + (foto.ativo ? '' : ' inativa');
+    badge.textContent = foto.ativo ? (foto.exibicoes + 'x') : 'inativa';
+
+    const btnToggle = document.createElement('button');
+    btnToggle.className = 'btn-toggle' + (foto.ativo ? '' : ' inativa');
+    btnToggle.textContent = foto.ativo ? '⏻' : '⏻';
+    btnToggle.title = foto.ativo ? 'Desativar da apresentação' : 'Reativar na apresentação';
+    btnToggle.addEventListener('click', (e) => {
+      e.stopPropagation();
+      alternarAtivo(foto, btnToggle, div);
+    });
+
+    div.appendChild(img);
+    div.appendChild(check);
+    div.appendChild(badge);
+    div.appendChild(btnToggle);
+    grade.appendChild(div);
+  });
+
+  grade.scrollTop = scrollTop;
+}
+
+// ---------- Toggle ativo/inativa ----------
+async function alternarAtivo(foto, botao, cardEl) {
+  const novoStatus = !foto.ativo;
+
+  // Feedback visual imediato (otimista)
+  botao.disabled = true;
+  const overlay = document.createElement('div');
+  overlay.className = 'loading-toggle';
+  overlay.innerHTML = '<div class="spinner"></div>';
+  cardEl.appendChild(overlay);
+
+  try {
+    await updateDoc(doc(db, "slides", foto.id), { ativo: novoStatus });
+    // O onSnapshot vai atualizar a UI automaticamente.
+    // Não precisamos mexer no DOM aqui — só limpar o overlay.
+    mostrarMsg(
+      novoStatus
+        ? '✅ Foto reativada na apresentação.'
+        : '⏸️ Foto desativada (não aparece mais no telão).',
+      'ok'
+    );
+  } catch (err) {
+    console.error(err);
+    mostrarMsg('Erro ao atualizar status: ' + err.message, 'err');
+    // Reverte otimismo (o onSnapshot não vai disparar)
+    botao.disabled = false;
+  } finally {
+    overlay.remove();
+  }
+}
+
+// ---------- Seleção ----------
+function alternarSelecao(id) {
+  if (selecionadas.has(id)) selecionadas.delete(id);
+  else selecionadas.add(id);
+
+  const el = grade.querySelector(`.foto[data-id="${id}"]`);
+  if (el) el.classList.toggle('selecionada', selecionadas.has(id));
+
+  atualizarContadores();
+}
+
+function atualizarContadores() {
+  contadorSel.textContent = selecionadas.size;
+  contadorTot.textContent = fotos.length;
+  contadorAtv.textContent = fotos.filter(f => f.ativo).length;
+  btnBaixar.disabled = selecionadas.size === 0;
+  btnBaixar.textContent = `Baixar ${selecionadas.size} foto(s) em ZIP`;
+}
+
+btnTodas.addEventListener('click', () => {
+  fotos.forEach(f => selecionadas.add(f.id));
+  document.querySelectorAll('.foto').forEach(el => el.classList.add('selecionada'));
+  atualizarContadores();
+});
+
+btnNenhuma.addEventListener('click', () => {
+  selecionadas.clear();
+  document.querySelectorAll('.foto').forEach(el => el.classList.remove('selecionada'));
+  atualizarContadores();
+});
+
+// ---------- Lightbox ----------
+function abrirLightbox(idx) {
+  indiceLightbox = idx;
+  atualizarLightbox();
+  lightbox.classList.add('ativo');
+}
+function atualizarLightbox() {
+  const foto = fotos[indiceLightbox];
+  if (!foto) return;
+  lbImg.src = foto.url;
+  lbContador.textContent = `${indiceLightbox + 1} / ${fotos.length}`;
+  lbAnterior.disabled = indiceLightbox === 0;
+  lbProximo.disabled = indiceLightbox === fotos.length - 1;
+}
+function fecharLightbox() {
+  lightbox.classList.remove('ativo');
+  lbImg.src = '';
+}
+lbFechar.addEventListener('click', fecharLightbox);
+lbAnterior.addEventListener('click', () => { if (indiceLightbox > 0) { indiceLightbox--; atualizarLightbox(); } });
+lbProximo.addEventListener('click', () => { if (indiceLightbox < fotos.length - 1) { indiceLightbox++; atualizarLightbox(); } });
+lightbox.addEventListener('click', (e) => { if (e.target === lightbox) fecharLightbox(); });
+
+document.addEventListener('keydown', (e) => {
+  if (!lightbox.classList.contains('ativo')) return;
+  if (e.key === 'Escape') fecharLightbox();
+  if (e.key === 'ArrowLeft' && indiceLightbox > 0) { indiceLightbox--; atualizarLightbox(); }
+  if (e.key === 'ArrowRight' && indiceLightbox < fotos.length - 1) { indiceLightbox++; atualizarLightbox(); }
+});
+
+// ---------- Download ZIP ----------
+async function urlParaBlob(url) {
+  if (url.startsWith('data:')) {
+    const [cabecalho, base64] = url.split(',');
+    const mime = cabecalho.match(/data:([^;]+);/)[1];
+    const bin = atob(base64);
+    const arr = new Uint8Array(bin.length);
+    for (let i = 0; i < bin.length; i++) arr[i] = bin.charCodeAt(i);
+    return new Blob([arr], { type: mime });
+  }
+  const resp = await fetch(url);
+  if (!resp.ok) throw new Error('HTTP ' + resp.status);
+  return await resp.blob();
+}
+
+function nomeArquivo(foto, index) {
+  const ext = (() => {
+    if (foto.url.startsWith('data:image/png')) return 'png';
+    if (foto.url.startsWith('data:image/webp')) return 'webp';
+    return 'jpg';
+  })();
+  const data = new Date(foto.criadoEm || Date.now());
+  const ymd = data.toISOString().slice(0, 19).replace(/[:T]/g, '-');
+  const pos = String(index + 1).padStart(3, '0');
+  return `${pos}_${ymd}.${ext}`;
+}
+
+btnBaixar.addEventListener('click', async () => {
+  const lista = fotos.filter(f => selecionadas.has(f.id));
+  if (lista.length === 0) return;
+
+  btnBaixar.disabled = true;
+  btnBaixar.innerHTML = '<span class="spinner-inline"></span>Preparando ZIP...';
+  barra.classList.add('ativa');
+  barraFill.style.width = '0%';
+  statusEl.textContent = '';
+  esconderMsg();
+
+  try {
+    const zip = new JSZip();
+    const pasta = zip.folder('fotos-apresentacao');
+
+    for (let i = 0; i < lista.length; i++) {
+      const foto = lista[i];
+      try {
+        const blob = await urlParaBlob(foto.url);
+        pasta.file(nomeArquivo(foto, i), blob);
+        statusEl.textContent = `Baixando ${i + 1} de ${lista.length}...`;
+      } catch (e) {
+        console.warn('Falha em uma foto:', foto.id, e);
+        pasta.file('ERRO_' + foto.id + '.txt', 'Não foi possível baixar: ' + foto.url);
+      }
+      barraFill.style.width = Math.round(((i + 1) / lista.length) * 100) + '%';
+    }
+
+    statusEl.textContent = 'Gerando arquivo ZIP...';
+    const conteudo = await zip.generateAsync(
+      { type: 'blob', compression: 'DEFLATE', compressionOptions: { level: 6 } },
+      (meta) => {
+        barraFill.style.width = Math.round(meta.percent) + '%';
+        statusEl.textContent = `Compactando... ${Math.round(meta.percent)}%`;
+      }
+    );
+
+    const nomeZip = `fotos-apresentacao-${new Date().toISOString().slice(0,10)}.zip`;
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(conteudo);
+    link.download = nomeZip;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    setTimeout(() => URL.revokeObjectURL(link.href), 10000);
+
+    statusEl.textContent = `✅ ${nomeZip} baixado com ${lista.length} foto(s).`;
+    mostrarMsg('Download concluído com sucesso!', 'ok');
+  } catch (err) {
+    console.error(err);
+    statusEl.textContent = '';
+    mostrarMsg('Erro ao gerar ZIP: ' + err.message, 'err');
+  } finally {
+    btnBaixar.innerHTML = `Baixar ${selecionadas.size} foto(s) em ZIP`;
+    btnBaixar.disabled = selecionadas.size === 0;
+  }
+});
+
+function mostrarMsg(texto, tipo) {
+  msg.textContent = texto;
+  msg.className = 'msg ' + tipo;
+  if (tipo === 'ok') setTimeout(esconderMsg, 3500);
+}
+function esconderMsg() {
+  msg.className = 'msg';
+}
+
+// Inicia
+iniciarListener();
+</script>
+</body>
+</html>
