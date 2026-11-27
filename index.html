@@ -12,17 +12,25 @@
   .slide { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; opacity: 0; transition: opacity 1s ease-in-out; }
   .slide.active { opacity: 1; }
   .slide img { max-width: 100%; max-height: 100%; object-fit: contain; }
+  .aviso-pausa {
+    position: fixed; top: 16px; right: 16px;
+    background: rgba(0,0,0,0.75); color: #fff;
+    padding: 8px 14px; border-radius: 8px;
+    font-size: 13px; font-family: sans-serif;
+    display: none; z-index: 10;
+  }
+  .aviso-pausa.ativo { display: block; }
 </style>
 </head>
 <body>
 
 <div class="slide-container" id="container"></div>
+<div class="aviso-pausa" id="avisoPausa">⏸️ Pausado (espaço para retomar)</div>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
 import { getFirestore, collection, onSnapshot, doc, updateDoc } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 
-// 🔴 SUA CONFIGURAÇÃO DO FIREBASE
 const firebaseConfig = {
   apiKey: "AIzaSyAn-4AVHxNfBPFZUXsPMXm1Ac6GBvoCgUc",
   authDomain: "teste-1047e.firebaseapp.com",
@@ -33,114 +41,217 @@ const firebaseConfig = {
 };
 
 // ============================================================
-// ⚙️ CONFIGURAÇÕES DA APRESENTAÇÃO (ALTERE AQUI)
+// ⚙️ CONFIGURAÇÕES
 // ============================================================
+const TEMPO_POR_SLIDE = 5000;  // 5 segundos por foto
+const MAX_EXIBICOES   = 5;     // cada foto enviada aparece 5x
 
-// 1. TEMPO DE EXIBIÇÃO DE CADA FOTO (em milissegundos)
-const TEMPO_POR_SLIDE = 5000; // 5000 = 5 segundos
-
-// 2. QUANTAS VEZES CADA FOTO ENVIADA VAI APARECER
-const MAX_EXIBICOES = 5; 
-
-// 3. IMAGENS FIXAS
-const IMAGENS_FIXAS = [
+// Fallback: usado apenas se a coleção "fixas" estiver vazia
+const IMAGENS_FIXAS_FALLBACK = [
   "https://picsum.photos/id/1015/1600/900",
   "https://picsum.photos/id/1016/1600/900",
   "https://picsum.photos/id/1018/1600/900"
 ];
 
 // ============================================================
-// LÓGICA DO SISTEMA
+// 🔥 Firebase
 // ============================================================
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
+// ============================================================
+// 📦 Estado
+// ============================================================
 let imagensEnviadas = [];
+let imagensFixas = [];
 let fila = [];
 let indiceAtual = 0;
 let timer = null;
 let slidesDOM = [];
+let pausado = false;
 
+// 🆕 Contador local de exibições (evita writes a cada slide)
+// { id: numeroDeExibicoes }
+const contadorLocal = {};
+
+// 🆕 Flag anti-loop: fotos que já tentamos desativar por erro
+const jaTenteiDesativar = new Set();
+
+// 🆕 Cache de URLs já renderizadas (evita recriar <img>)
+const urlsNaTela = new Set();
+
+const avisoPausa = document.getElementById('avisoPausa');
+
+// ============================================================
+// 🎬 MONTAGEM DA FILA
+// ============================================================
 function montarFila() {
-  const fixas = IMAGENS_FIXAS.map((url, i) => ({ url, fixa: true, key: 'fixa_' + i }));
-  fila = [...fixas, ...imagensEnviadas];
+  // Fixas primeiro
+  const fixas = imagensFixas.map(f => ({
+    url: f.url,
+    fixa: true,
+    id: f.id,
+    nome: f.nome || ''
+  }));
+
+  // Enviadas: só as ativas + não esgotadas localmente
+  const enviadas = imagensEnviadas.filter(item => {
+    const contLocal = contadorLocal[item.id] || 0;
+    // Se o contador local já atingiu o limite, não mostra mais
+    return (item.exibicoes + contLocal) < MAX_EXIBICOES;
+  });
+
+  fila = [...fixas, ...enviadas];
+
+  // Fallback
+  if (fila.length === 0 && IMAGENS_FIXAS_FALLBACK.length > 0) {
+    fila = IMAGENS_FIXAS_FALLBACK.map((url, i) => ({
+      url, fixa: true, id: 'fallback_' + i
+    }));
+  }
 }
 
+// ============================================================
+// 🎨 RENDERIZAÇÃO
+// ============================================================
 function renderizar() {
   const container = document.getElementById('container');
-  container.innerHTML = ''; 
-  slidesDOM = [];
-  
-  if (fila.length === 0) { 
-    container.innerHTML = '<div style="color:#555;font-size:24px;text-align:center;">Aguardando...</div>'; 
-    return; 
+
+  if (fila.length === 0) {
+    container.innerHTML = '<div style="color:#555;font-size:24px;text-align:center;">Aguardando...</div>';
+    slidesDOM = [];
+    urlsNaTela.clear();
+    return;
   }
-  
+
+  // 🆕 Otimização: verifica se o conjunto de URLs mudou
+  const novasUrls = new Set(fila.map(i => i.url));
+  const mesmoConteudo =
+    novasUrls.size === urlsNaTela.size &&
+    [...novasUrls].every(u => urlsNaTela.has(u));
+
+  if (mesmoConteudo && slidesDOM.length === fila.length) {
+    // Só ajusta a classe active, não recria os DOM
+    slidesDOM.forEach((el, i) => {
+      el.classList.toggle('active', i === indiceAtual);
+    });
+    return;
+  }
+
+  // Conteúdo mudou: recria
+  container.innerHTML = '';
+  slidesDOM = [];
+  urlsNaTela.clear();
+
   fila.forEach(item => {
     const div = document.createElement('div');
     div.className = 'slide';
     const tag = document.createElement('img');
     tag.src = item.url;
-    div.appendChild(tag); 
-    container.appendChild(div); 
+    tag.onerror = () => {
+      console.warn('Imagem falhou:', item.url.slice(0, 60));
+      // 🆕 Só desativa se ainda não tentou (evita escritas em loop)
+      if (!item.fixa && item.id && !jaTenteiDesativar.has(item.id)) {
+        jaTenteiDesativar.add(item.id);
+        updateDoc(doc(db, "slides", item.id), { ativo: false }).catch(() => {});
+      }
+    };
+    div.appendChild(tag);
+    container.appendChild(div);
     slidesDOM.push(div);
+    urlsNaTela.add(item.url);
   });
-  
+
   if (indiceAtual >= fila.length) indiceAtual = 0;
-  slidesDOM[indiceAtual].classList.add('active');
+  if (slidesDOM[indiceAtual]) slidesDOM[indiceAtual].classList.add('active');
 }
 
+// ============================================================
+// ▶️ AVANÇAR SLIDE (com contagem LOCAL de exibições)
+// ============================================================
 async function mostrarProximo() {
-  if (fila.length === 0 || slidesDOM.length === 0) return;
+  if (fila.length === 0 || slidesDOM.length === 0 || pausado) return;
   const atual = fila[indiceAtual];
 
-  if (!atual.fixa) {
-    const novas = (atual.exibicoes || 0) + 1;
-    
-    if (novas >= MAX_EXIBICOES) {
-      // Em vez de deletar, marcamos como INATIVA. 
-      // Ela fica salva no Firebase mas sai da apresentação.
-      await updateDoc(doc(db, "slides", atual.id), { 
-        exibicoes: novas,
-        ativo: false 
-      });
-      return; // O onSnapshot vai reconstruir a tela e remover ela da fila
-    } else {
-      await updateDoc(doc(db, "slides", atual.id), { exibicoes: novas });
-      atual.exibicoes = novas;
+  // 🆕 Conta localmente, não no Firestore
+  if (!atual.fixa && atual.id) {
+    contadorLocal[atual.id] = (contadorLocal[atual.id] || 0) + 1;
+
+    // 🆕 Só grava no Firestore quando atingir o limite (desativa)
+    if ((atual.exibicoes || 0) + contadorLocal[atual.id] >= MAX_EXIBICOES) {
+      try {
+        await updateDoc(doc(db, "slides", atual.id), {
+          exibicoes: (atual.exibicoes || 0) + contadorLocal[atual.id],
+          ativo: false
+        });
+        // Remove da fila local imediatamente para não mostrar de novo
+        delete contadorLocal[atual.id];
+      } catch (e) {
+        console.warn('Erro ao desativar foto:', e.message);
+      }
     }
   }
 
-  slidesDOM[indiceAtual].classList.remove('active');
+  // Avança visualmente
+  if (slidesDOM[indiceAtual]) slidesDOM[indiceAtual].classList.remove('active');
   indiceAtual = (indiceAtual + 1) % fila.length;
-  slidesDOM[indiceAtual].classList.add('active');
+  if (slidesDOM[indiceAtual]) slidesDOM[indiceAtual].classList.add('active');
 }
 
+// ============================================================
+// 🔁 LOOP
+// ============================================================
 function iniciarLoop() {
   if (timer) clearInterval(timer);
   timer = setInterval(mostrarProximo, TEMPO_POR_SLIDE);
 }
 
-// Escuta em tempo real o banco de dados
+// Pausar/retomar com barra de espaço
+document.addEventListener('keydown', (e) => {
+  if (e.code === 'Space') {
+    e.preventDefault();
+    pausado = !pausado;
+    avisoPausa.classList.toggle('ativo', pausado);
+    if (pausado) clearInterval(timer);
+    else iniciarLoop();
+  }
+});
+
+// ============================================================
+// 📡 LISTENERS (onSnapshot)
+// ============================================================
+function reconstruirFila() {
+  const urlAtual = fila[indiceAtual]?.url;
+  montarFila();
+
+  // Mantém o índice na mesma foto se possível
+  const novoIndice = fila.findIndex(i => i.url === urlAtual);
+  indiceAtual = novoIndice >= 0 ? novoIndice : 0;
+
+  renderizar();
+  if (!timer && !pausado) iniciarLoop();
+}
+
 onSnapshot(collection(db, "slides"), (snapshot) => {
   imagensEnviadas = snapshot.docs
     .map(d => ({
-      id: d.id, 
-      url: d.data().url, 
+      id: d.id,
+      url: d.data().url,
       exibicoes: d.data().exibicoes || 0,
-      ativo: d.data().ativo !== false // Se o campo não existir, assume que é true
+      ativo: d.data().ativo !== false
     }))
-    .filter(img => img.ativo); // 🌟 AQUI: ignora as imagens inativas (limite atingido)
+    .filter(img => img.ativo);
 
-  const urlAtual = fila[indiceAtual]?.url;
-  montarFila();
-  
-  const novoIndice = fila.findIndex(i => i.url === urlAtual);
-  indiceAtual = novoIndice >= 0 ? novoIndice : 0;
-  
-  renderizar();
-  
-  if (!timer) iniciarLoop();
+  reconstruirFila();
+});
+
+onSnapshot(collection(db, "fixas"), (snapshot) => {
+  imagensFixas = snapshot.docs.map(d => ({
+    id: d.id,
+    url: d.data().url,
+    nome: d.data().nome || ''
+  }));
+  reconstruirFila();
 });
 </script>
 </body>

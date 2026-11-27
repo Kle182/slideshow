@@ -10,15 +10,12 @@
   body {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     background: linear-gradient(135deg, #667eea, #764ba2);
-    min-height: 100vh;
-    padding: 16px;
+    min-height: 100vh; padding: 16px;
   }
   .card {
     background: #fff; border-radius: 20px;
-    padding: 22px 18px;
-    max-width: 1200px; width: 100%;
-    margin: 0 auto;
-    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    padding: 22px 18px; max-width: 1200px; width: 100%;
+    margin: 0 auto; box-shadow: 0 20px 60px rgba(0,0,0,0.3);
   }
   .header {
     display: flex; justify-content: space-between;
@@ -34,58 +31,50 @@
     white-space: nowrap;
   }
   .status-conexao.off { background: #fee2e2; color: #991b1b; }
-  .status-conexao .dot {
-    width: 8px; height: 8px; border-radius: 50%;
-    background: #22c55e;
-  }
+  .status-conexao .dot { width: 8px; height: 8px; border-radius: 50%; background: #22c55e; }
   .status-conexao.off .dot { background: #ef4444; }
 
   p.sub { color: #888; margin-bottom: 14px; font-size: 13px; line-height: 1.4; }
 
-  /* Estatísticas */
-  .stats {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
-    gap: 8px;
-    margin-bottom: 14px;
+  .abas { display: flex; gap: 4px; border-bottom: 2px solid #e0d6f5; margin-bottom: 16px; flex-wrap: wrap; }
+  .aba {
+    padding: 10px 18px; border: none; background: transparent;
+    font-size: 14px; font-weight: 700; color: #764ba2;
+    cursor: pointer; border-bottom: 3px solid transparent;
+    margin-bottom: -2px; transition: all 0.15s;
+    display: flex; align-items: center; gap: 6px;
   }
-  .stat {
-    background: #f8f5ff;
-    border-radius: 10px;
-    padding: 10px 12px;
-    text-align: center;
-  }
+  .aba:hover { background: #f5f0ff; }
+  .aba.ativa { color: #333; border-bottom-color: #764ba2; }
+  .aba .qtd { background: #764ba2; color: #fff; font-size: 11px; padding: 1px 7px; border-radius: 10px; font-weight: 700; }
+  .aba.ativa .qtd { background: #667eea; }
+
+  .painel-aba { display: none; }
+  .painel-aba.ativo { display: block; }
+
+  .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); gap: 8px; margin-bottom: 14px; }
+  .stat { background: #f8f5ff; border-radius: 10px; padding: 10px 12px; text-align: center; }
   .stat .valor { font-size: 22px; font-weight: bold; color: #333; }
   .stat .rotulo { font-size: 11px; color: #888; text-transform: uppercase; letter-spacing: 0.5px; }
   .stat.verde .valor { color: #16a34a; }
   .stat.vermelho .valor { color: #dc2626; }
   .stat.azul .valor { color: #2563eb; }
 
-  /* Toolbar */
   .toolbar {
     display: flex; flex-wrap: wrap; gap: 8px;
     align-items: center; justify-content: space-between;
-    padding: 12px 14px;
-    background: #f5f0ff;
-    border-radius: 12px;
-    margin-bottom: 12px;
+    padding: 12px 14px; background: #f5f0ff;
+    border-radius: 12px; margin-bottom: 12px;
   }
   .toolbar .grupo { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
   .toolbar .esquerda { font-size: 14px; color: #4a2c7a; }
   .toolbar strong { color: #333; }
 
   .btn-mini {
-    padding: 7px 11px;
-    border: 1px solid #764ba2;
-    background: #fff;
-    color: #764ba2;
-    border-radius: 8px;
-    font-size: 12.5px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.15s;
-    min-height: 34px;
-    white-space: nowrap;
+    padding: 7px 11px; border: 1px solid #764ba2;
+    background: #fff; color: #764ba2; border-radius: 8px;
+    font-size: 12.5px; font-weight: 600; cursor: pointer;
+    transition: all 0.15s; min-height: 34px; white-space: nowrap;
   }
   .btn-mini:hover { background: #764ba2; color: #fff; }
   .btn-mini:disabled { opacity: 0.4; cursor: not-allowed; }
@@ -93,233 +82,156 @@
   .btn-mini.perigo:hover { background: #dc2626; color: #fff; }
   .btn-mini.verde { border-color: #16a34a; color: #16a34a; }
   .btn-mini.verde:hover { background: #16a34a; color: #fff; }
+  .btn-mini.roxo { background: #764ba2; color: #fff; }
+  .btn-mini.roxo:hover { background: #5a377e; }
 
-  /* Filtros */
-  .filtros {
-    display: flex; gap: 4px;
-    background: #fff; border-radius: 8px;
-    padding: 3px;
-    border: 1px solid #e0d6f5;
-  }
+  .filtros { display: flex; gap: 4px; background: #fff; border-radius: 8px; padding: 3px; border: 1px solid #e0d6f5; }
   .filtro {
-    padding: 6px 12px;
-    border: none; background: transparent;
-    border-radius: 6px;
-    font-size: 12.5px; font-weight: 600;
-    color: #764ba2;
-    cursor: pointer;
-    transition: all 0.15s;
+    padding: 6px 12px; border: none; background: transparent;
+    border-radius: 6px; font-size: 12.5px; font-weight: 600;
+    color: #764ba2; cursor: pointer; transition: all 0.15s;
   }
   .filtro.ativo { background: #764ba2; color: #fff; }
   .filtro:hover:not(.ativo) { background: #f5f0ff; }
 
   .input-mini {
-    padding: 7px 10px;
-    border: 1px solid #e0d6f5;
-    border-radius: 8px;
-    font-size: 12.5px;
-    font-family: inherit;
-    background: #fff;
-    color: #333;
+    padding: 7px 10px; border: 1px solid #e0d6f5;
+    border-radius: 8px; font-size: 12.5px; font-family: inherit;
+    background: #fff; color: #333;
   }
   .input-mini:focus { outline: 2px solid #764ba2; outline-offset: 0; }
 
-  /* Grade */
+  .zona-upload {
+    border: 3px dashed #764ba2; border-radius: 14px;
+    padding: 24px 16px; text-align: center;
+    background: #faf7ff; margin-bottom: 16px;
+    cursor: pointer; transition: all 0.2s;
+  }
+  .zona-upload:hover, .zona-upload.arrastando { background: #f0e9ff; border-color: #667eea; }
+  .zona-upload .icone { font-size: 40px; margin-bottom: 8px; }
+  .zona-upload .titulo { font-size: 15px; font-weight: 700; color: #4a2c7a; margin-bottom: 4px; }
+  .zona-upload .hint { font-size: 12px; color: #888; }
+  .zona-upload input { display: none; }
+
+  .preview-fixa { display: none; margin-top: 14px; text-align: center; }
+  .preview-fixa.ativo { display: block; }
+  .preview-fixa img { max-width: 100%; max-height: 220px; border-radius: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
+  .preview-fixa .info { margin-top: 8px; font-size: 12px; color: #666; display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; }
+  .preview-fixa .acoes-preview { margin-top: 10px; display: flex; gap: 8px; justify-content: center; }
+
   .grade {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-    gap: 10px;
-    margin-bottom: 16px;
-    max-height: 58vh;
-    overflow-y: auto;
-    padding: 4px;
-    transition: grid-template-columns 0.2s;
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 10px; margin-bottom: 16px; max-height: 58vh;
+    overflow-y: auto; padding: 4px;
   }
   .grade.compacta { grid-template-columns: repeat(auto-fill, minmax(95px, 1fr)); gap: 6px; }
   .grade.lista { display: flex; flex-direction: column; gap: 6px; max-height: 60vh; }
 
   .foto {
-    position: relative;
-    border-radius: 10px;
-    overflow: hidden;
-    background: #000;
-    aspect-ratio: 4 / 3;
-    border: 3px solid transparent;
-    transition: border-color 0.15s, opacity 0.2s;
+    position: relative; border-radius: 10px; overflow: hidden;
+    background: #000; aspect-ratio: 4 / 3;
+    border: 3px solid transparent; transition: border-color 0.15s, opacity 0.2s;
   }
   .grade.lista .foto {
-    aspect-ratio: auto;
-    display: flex; align-items: center; gap: 10px;
+    aspect-ratio: auto; display: flex; align-items: center; gap: 10px;
     background: #fafafa; border: 1px solid #e0e0e0;
-    border-radius: 8px; padding: 6px;
-    border-left: 4px solid #22c55e;
+    border-radius: 8px; padding: 6px; border-left: 4px solid #22c55e;
   }
   .grade.lista .foto.inativa { border-left-color: #dc2626; }
-  .grade.lista .foto img {
-    width: 80px; height: 60px;
-    object-fit: cover; border-radius: 6px;
-    flex-shrink: 0;
-  }
-  .grade.lista .foto .info-lista {
-    flex: 1; min-width: 0; font-size: 12px; color: #333;
-  }
-  .grade.lista .foto .info-lista .nome {
-    font-weight: 600; white-space: nowrap;
-    overflow: hidden; text-overflow: ellipsis;
-  }
-  .grade.lista .foto .info-lista .meta {
-    color: #888; font-size: 11px; margin-top: 2px;
-  }
+  .grade.lista .foto img { width: 80px; height: 60px; object-fit: cover; border-radius: 6px; flex-shrink: 0; }
+  .grade.lista .foto .info-lista { flex: 1; min-width: 0; font-size: 12px; color: #333; }
+  .grade.lista .foto .info-lista .nome { font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .grade.lista .foto .info-lista .meta { color: #888; font-size: 11px; margin-top: 2px; }
   .grade.lista .foto .check,
   .grade.lista .foto .badge,
   .grade.lista .foto .btn-toggle,
   .grade.lista .foto .btn-excluir,
-  .grade.lista .foto .btn-reset {
-    position: static; transform: none;
-    margin-left: 4px;
-  }
+  .grade.lista .foto .btn-reset { position: static; transform: none; margin-left: 4px; }
   .grade.lista .foto .check { width: 24px; height: 24px; font-size: 13px; }
   .grade.lista .foto .btn-toggle,
   .grade.lista .foto .btn-excluir,
   .grade.lista .foto .btn-reset { width: 28px; height: 28px; font-size: 13px; }
-  .grade.lista .foto .acoes-lista {
-    display: flex; gap: 4px; align-items: center;
-    flex-shrink: 0;
-  }
+  .grade.lista .foto .acoes-lista { display: flex; gap: 4px; align-items: center; flex-shrink: 0; }
 
-  .foto img {
-    width: 100%; height: 100%;
-    object-fit: cover;
-    display: block;
-    cursor: zoom-in;
-    transition: opacity 0.2s;
-  }
+  .foto img { width: 100%; height: 100%; object-fit: cover; display: block; cursor: zoom-in; transition: opacity 0.2s; }
   .foto:hover img { opacity: 0.85; }
   .foto.selecionada { border-color: #22c55e; }
   .foto.inativa img { opacity: 0.4; filter: grayscale(0.6); }
 
   .foto .check {
-    position: absolute;
-    top: 6px; left: 6px;
-    width: 28px; height: 28px;
-    border-radius: 50%;
-    background: rgba(0,0,0,0.55);
-    border: 2px solid #fff;
+    position: absolute; top: 6px; left: 6px;
+    width: 28px; height: 28px; border-radius: 50%;
+    background: rgba(0,0,0,0.55); border: 2px solid #fff;
     display: flex; align-items: center; justify-content: center;
-    color: transparent;
-    font-size: 15px; font-weight: bold;
-    transition: all 0.15s;
-    cursor: pointer;
-    z-index: 3;
+    color: transparent; font-size: 15px; font-weight: bold;
+    transition: all 0.15s; cursor: pointer; z-index: 3;
   }
   .foto.selecionada .check { background: #22c55e; color: #fff; }
 
   .foto .badge {
-    position: absolute;
-    bottom: 6px; left: 6px;
-    background: rgba(0,0,0,0.7);
-    color: #fff;
-    font-size: 10px;
-    padding: 2px 6px;
-    border-radius: 6px;
-    font-weight: 600;
-    pointer-events: none;
-    z-index: 1;
+    position: absolute; bottom: 6px; left: 6px;
+    background: rgba(0,0,0,0.7); color: #fff;
+    font-size: 10px; padding: 2px 6px;
+    border-radius: 6px; font-weight: 600;
+    pointer-events: none; z-index: 1;
   }
   .foto .badge.inativa { background: #dc2626; }
   .foto .badge.duplicada { background: #f59e0b; }
+  .foto .badge.fixa { background: #764ba2; }
 
-  /* Botões no card */
   .foto .btn-toggle,
   .foto .btn-excluir,
   .foto .btn-reset {
-    position: absolute;
-    width: 32px; height: 32px;
-    border-radius: 50%;
-    border: 2px solid #fff;
-    color: #fff;
-    font-size: 14px;
-    cursor: pointer;
+    position: absolute; width: 32px; height: 32px;
+    border-radius: 50%; border: 2px solid #fff;
+    color: #fff; font-size: 14px; cursor: pointer;
     display: flex; align-items: center; justify-content: center;
-    transition: background 0.15s, transform 0.15s;
-    z-index: 2;
+    transition: background 0.15s, transform 0.15s; z-index: 2;
   }
   .foto .btn-toggle { bottom: 6px; right: 6px; background: rgba(34, 197, 94, 0.9); }
   .foto .btn-toggle.inativa { background: rgba(220, 38, 38, 0.9); }
   .foto .btn-toggle:hover,
   .foto .btn-excluir:hover,
   .foto .btn-reset:hover { transform: scale(1.12); }
-  .foto .btn-excluir {
-    top: 6px; right: 6px;
-    background: rgba(220, 38, 38, 0.9);
-    opacity: 0;
-    transition: opacity 0.15s, transform 0.15s;
-  }
+  .foto .btn-excluir { top: 6px; right: 6px; background: rgba(220, 38, 38, 0.9); opacity: 0; transition: opacity 0.15s, transform 0.15s; }
   .foto:hover .btn-excluir { opacity: 1; }
-  .foto .btn-reset {
-    top: 6px; right: 44px;
-    background: rgba(37, 99, 235, 0.9);
-    opacity: 0;
-    transition: opacity 0.15s, transform 0.15s;
-  }
+  .foto .btn-reset { top: 6px; right: 44px; background: rgba(37, 99, 235, 0.9); opacity: 0; transition: opacity 0.15s, transform 0.15s; }
   .foto:hover .btn-reset { opacity: 1; }
-  .foto .btn-toggle:disabled,
-  .foto .btn-excluir:disabled,
-  .foto .btn-reset:disabled { opacity: 0.5; cursor: wait; }
 
   .foto .loading-toggle {
-    position: absolute; inset: 0;
-    background: rgba(0,0,0,0.55);
-    display: flex; align-items: center; justify-content: center;
-    z-index: 4;
+    position: absolute; inset: 0; background: rgba(0,0,0,0.55);
+    display: flex; align-items: center; justify-content: center; z-index: 4;
   }
   .foto .loading-toggle .spinner {
     width: 22px; height: 22px;
     border: 3px solid rgba(255,255,255,0.3);
-    border-top-color: #fff;
-    border-radius: 50%;
+    border-top-color: #fff; border-radius: 50%;
     animation: spin 0.8s linear infinite;
   }
 
-  /* Lightbox */
   .lightbox {
-    position: fixed; inset: 0;
-    background: rgba(0,0,0,0.94);
-    display: none;
-    align-items: center; justify-content: center;
-    z-index: 1000;
-    padding: 20px;
+    position: fixed; inset: 0; background: rgba(0,0,0,0.94);
+    display: none; align-items: center; justify-content: center;
+    z-index: 1000; padding: 20px;
   }
   .lightbox.ativo { display: flex; }
-  .lightbox img {
-    max-width: 95vw; max-height: 90vh;
-    object-fit: contain;
-    border-radius: 8px;
-  }
+  .lightbox img { max-width: 95vw; max-height: 90vh; object-fit: contain; border-radius: 8px; }
   .lightbox .fechar {
-    position: absolute;
-    top: 16px; right: 16px;
-    background: #fff; color: #333;
-    border: none;
-    width: 44px; height: 44px;
-    border-radius: 50%;
+    position: absolute; top: 16px; right: 16px;
+    background: #fff; color: #333; border: none;
+    width: 44px; height: 44px; border-radius: 50%;
     font-size: 22px; cursor: pointer; font-weight: bold;
   }
   .lightbox .nav {
-    position: absolute;
-    top: 50%; transform: translateY(-50%);
-    background: rgba(255,255,255,0.9);
-    color: #333;
-    border: none;
-    width: 48px; height: 48px;
-    border-radius: 50%;
-    font-size: 22px; cursor: pointer; font-weight: bold;
+    position: absolute; top: 50%; transform: translateY(-50%);
+    background: rgba(255,255,255,0.9); color: #333;
+    border: none; width: 48px; height: 48px;
+    border-radius: 50%; font-size: 22px; cursor: pointer; font-weight: bold;
   }
   .lightbox .nav.anterior { left: 16px; }
   .lightbox .nav.proximo  { right: 16px; }
   .lightbox .contador-lb {
-    position: absolute;
-    bottom: 20px; left: 50%; transform: translateX(-50%);
+    position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%);
     color: #fff; font-size: 14px;
     background: rgba(0,0,0,0.6);
     padding: 6px 14px; border-radius: 20px;
@@ -328,82 +240,43 @@
   .btn-baixar {
     width: 100%; padding: 16px;
     background: linear-gradient(135deg, #667eea, #764ba2);
-    color: #fff; border: none;
-    border-radius: 12px;
-    font-size: 16px; font-weight: bold;
-    cursor: pointer;
-    transition: transform 0.2s, opacity 0.2s;
-    min-height: 52px;
+    color: #fff; border: none; border-radius: 12px;
+    font-size: 16px; font-weight: bold; cursor: pointer;
+    transition: transform 0.2s, opacity 0.2s; min-height: 52px;
   }
   .btn-baixar:active { transform: scale(0.98); }
   .btn-baixar:disabled { opacity: 0.5; cursor: not-allowed; }
 
-  .barra {
-    width: 100%; height: 10px;
-    background: #eee; border-radius: 5px;
-    overflow: hidden; margin-top: 12px;
-    display: none;
-  }
+  .barra { width: 100%; height: 10px; background: #eee; border-radius: 5px; overflow: hidden; margin-top: 12px; display: none; }
   .barra.ativa { display: block; }
-  .barra > div {
-    height: 100%; width: 0%;
-    background: linear-gradient(90deg, #667eea, #764ba2);
-    transition: width 0.2s;
-  }
-  .status {
-    margin-top: 8px; font-size: 13px;
-    color: #666; text-align: center; min-height: 18px;
-  }
-  .msg {
-    margin-top: 12px; padding: 12px;
-    border-radius: 10px; text-align: center;
-    font-size: 14px; display: none; line-height: 1.4;
-  }
+  .barra > div { height: 100%; width: 0%; background: linear-gradient(90deg, #667eea, #764ba2); transition: width 0.2s; }
+  .status { margin-top: 8px; font-size: 13px; color: #666; text-align: center; min-height: 18px; }
+  .msg { margin-top: 12px; padding: 12px; border-radius: 10px; text-align: center; font-size: 14px; display: none; line-height: 1.4; }
   .msg.ok  { background: #d4edda; color: #155724; display: block; }
   .msg.err { background: #f8d7da; color: #721c24; display: block; }
   .msg.info{ background: #d1ecf1; color: #0c5460; display: block; }
 
   .spinner-inline {
-    display: inline-block;
-    width: 16px; height: 16px;
+    display: inline-block; width: 16px; height: 16px;
     border: 2px solid rgba(255,255,255,0.3);
-    border-top-color: #fff;
-    border-radius: 50%;
+    border-top-color: #fff; border-radius: 50%;
     animation: spin 0.8s linear infinite;
-    vertical-align: middle;
-    margin-right: 8px;
+    vertical-align: middle; margin-right: 8px;
   }
   @keyframes spin { to { transform: rotate(360deg); } }
 
-  .vazio {
-    text-align: center; color: #999;
-    padding: 40px 10px; font-size: 14px;
-  }
+  .vazio { text-align: center; color: #999; padding: 40px 10px; font-size: 14px; }
 
-  /* Painel de duplicatas */
   .painel-dup {
-    background: #fef3c7;
-    border-left: 4px solid #f59e0b;
-    border-radius: 8px;
-    padding: 10px 14px;
-    margin-bottom: 12px;
-    font-size: 13px;
-    color: #92400e;
-    display: none;
+    background: #fef3c7; border-left: 4px solid #f59e0b;
+    border-radius: 8px; padding: 10px 14px;
+    margin-bottom: 12px; font-size: 13px;
+    color: #92400e; display: none;
   }
   .painel-dup.ativo { display: block; }
 
-  /* Ajuda de atalhos */
-  .ajuda-atalhos {
-    font-size: 11px; color: #999;
-    margin-top: 8px; text-align: center;
-    line-height: 1.6;
-  }
-  .ajuda-atalhos kbd {
-    background: #eee; border-radius: 3px;
-    padding: 1px 5px; font-family: monospace;
-    color: #333; border: 1px solid #ccc;
-  }
+  .ajuda-atalhos { font-size: 11px; color: #999; margin-top: 8px; text-align: center; line-height: 1.6; }
+  .ajuda-atalhos kbd { background: #eee; border-radius: 3px; padding: 1px 5px; font-family: monospace; color: #333; border: 1px solid #ccc; }
 </style>
 </head>
 <body>
@@ -416,60 +289,174 @@
     </div>
   </div>
   <p class="sub">
-    Clique na imagem para ampliar. <strong>✓</strong> = selecionar p/ ZIP · <strong>⏻</strong> = ativar/desativar · <strong>🔄</strong> = resetar · <strong>🗑</strong> = excluir
+    <strong>📤 Enviadas</strong> = fotos do público (temporárias). <strong>📌 Permanentes</strong> = fotos que você sobe e ficam sempre no telão. <strong>⚙️ Configurações</strong> = limite de envio.
   </p>
 
-  <!-- Estatísticas -->
-  <div class="stats">
-    <div class="stat"><div class="valor" id="statTotal">0</div><div class="rotulo">Total</div></div>
-    <div class="stat verde"><div class="valor" id="statAtivas">0</div><div class="rotulo">Ativas</div></div>
-    <div class="stat vermelho"><div class="valor" id="statInativas">0</div><div class="rotulo">Inativas</div></div>
-    <div class="stat azul"><div class="valor" id="statExibicoes">0</div><div class="rotulo">Exibições</div></div>
-    <div class="stat"><div class="valor" id="statSel">0</div><div class="rotulo">Selecionadas</div></div>
+  <div class="abas">
+    <button class="aba ativa" data-aba="enviadas">
+      📤 Enviadas <span class="qtd" id="qtdAbaEnviadas">0</span>
+    </button>
+    <button class="aba" data-aba="fixas">
+      📌 Permanentes <span class="qtd" id="qtdAbaFixas">0</span>
+    </button>
+    <button class="aba" data-aba="config">
+      ⚙️ Configurações
+    </button>
   </div>
 
-  <!-- Aviso de duplicatas -->
-  <div class="painel-dup" id="painelDup"></div>
+  <!-- ============================================================ -->
+  <!-- ABA: ENVIADAS -->
+  <!-- ============================================================ -->
+  <div class="painel-aba ativo" id="painelEnviadas">
+    <div class="stats">
+      <div class="stat"><div class="valor" id="statTotal">0</div><div class="rotulo">Total</div></div>
+      <div class="stat verde"><div class="valor" id="statAtivas">0</div><div class="rotulo">Ativas</div></div>
+      <div class="stat vermelho"><div class="valor" id="statInativas">0</div><div class="rotulo">Inativas</div></div>
+      <div class="stat azul"><div class="valor" id="statExibicoes">0</div><div class="rotulo">Exibições</div></div>
+      <div class="stat"><div class="valor" id="statSel">0</div><div class="rotulo">Selecionadas</div></div>
+    </div>
 
-  <!-- Toolbar -->
-  <div class="toolbar">
-    <div class="grupo esquerda">
-      <div class="filtros">
-        <button class="filtro ativo" data-filtro="todas">Todas</button>
-        <button class="filtro" data-filtro="ativas">Ativas</button>
-        <button class="filtro" data-filtro="inativas">Inativas</button>
+    <div class="painel-dup" id="painelDup"></div>
+
+    <div class="toolbar">
+      <div class="grupo esquerda">
+        <div class="filtros">
+          <button class="filtro ativo" data-filtro="todas">Todas</button>
+          <button class="filtro" data-filtro="ativas">Ativas</button>
+          <button class="filtro" data-filtro="inativas">Inativas</button>
+        </div>
+        <input type="date" class="input-mini" id="filtroData" title="Filtrar por data de envio">
+        <select class="input-mini" id="ordenacao" title="Ordenação">
+          <option value="data-asc">📅 Data ↑</option>
+          <option value="data-desc">📅 Data ↓</option>
+          <option value="exibicoes">👁️ Mais exibidas</option>
+          <option value="nome">🔤 Nome A-Z</option>
+        </select>
       </div>
-      <input type="date" class="input-mini" id="filtroData" title="Filtrar por data de envio">
-      <select class="input-mini" id="ordenacao" title="Ordenação">
-        <option value="data-asc">📅 Data ↑</option>
-        <option value="data-desc">📅 Data ↓</option>
-        <option value="exibicoes">👁️ Mais exibidas</option>
-        <option value="nome">🔤 Nome A-Z</option>
-      </select>
+      <div class="grupo">
+        <button class="btn-mini" id="btnTodas">Marcar todas</button>
+        <button class="btn-mini" id="btnNenhuma">Desmarcar</button>
+        <button class="btn-mini verde" id="btnAtivarLote" disabled>✅ Ativar</button>
+        <button class="btn-mini" id="btnDesativarLote" disabled>⏸️ Desativar</button>
+        <button class="btn-mini perigo" id="btnExcluirLote" disabled>🗑️ Excluir</button>
+        <button class="btn-mini" id="btnAtualizar">🔄 Atualizar</button>
+        <button class="btn-mini" id="btnCompacto">🔲 Compacto</button>
+        <button class="btn-mini" id="btnExportCSV">📄 CSV</button>
+      </div>
     </div>
-    <div class="grupo">
-      <button class="btn-mini" id="btnTodas">Marcar todas</button>
-      <button class="btn-mini" id="btnNenhuma">Desmarcar</button>
-      <button class="btn-mini verde" id="btnAtivarLote" disabled>✅ Ativar</button>
-      <button class="btn-mini" id="btnDesativarLote" disabled>⏸️ Desativar</button>
-      <button class="btn-mini perigo" id="btnExcluirLote" disabled>🗑️ Excluir</button>
-      <button class="btn-mini" id="btnAtualizar">🔄 Atualizar</button>
-      <button class="btn-mini" id="btnCompacto">🔲 Compacto</button>
-      <button class="btn-mini" id="btnExportCSV">📄 CSV</button>
+
+    <div class="grade" id="grade">
+      <div class="vazio">Carregando fotos...</div>
+    </div>
+
+    <button class="btn-baixar" id="btnBaixar" disabled>Baixar 0 foto(s) em ZIP</button>
+
+    <div class="barra" id="barra"><div id="barraFill"></div></div>
+    <div class="status" id="status"></div>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- ABA: FIXAS -->
+  <!-- ============================================================ -->
+  <div class="painel-aba" id="painelFixas">
+    <div class="stats" style="grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));">
+      <div class="stat"><div class="valor" id="statFixasTotal">0</div><div class="rotulo">Permanentes</div></div>
+      <div class="stat azul"><div class="valor" id="statFixasSel">0</div><div class="rotulo">Selecionadas</div></div>
+    </div>
+
+    <div class="zona-upload" id="zonaUpload">
+      <div class="icone">📌</div>
+      <div class="titulo">Adicionar foto permanente</div>
+      <div class="hint">Clique ou arraste uma imagem aqui. Ela ficará no telão para sempre (até você remover).</div>
+      <input type="file" id="inputFixa" accept="image/*" multiple>
+    </div>
+
+    <div class="preview-fixa" id="previewFixa">
+      <img id="previewFixaImg" alt="Preview">
+      <div class="info" id="previewFixaInfo"></div>
+      <div class="acoes-preview">
+        <button class="btn-mini" id="btnCancelarFixa">Cancelar</button>
+        <button class="btn-mini roxo" id="btnConfirmarFixa">✅ Adicionar à apresentação</button>
+      </div>
+    </div>
+
+    <div class="toolbar" style="margin-top: 14px;">
+      <div class="grupo esquerda">
+        <span><strong id="contadorFixasSel">0</strong> de <strong id="contadorFixasTotal">0</strong> selecionadas</span>
+      </div>
+      <div class="grupo">
+        <button class="btn-mini" id="btnSelTodasFixas">Marcar todas</button>
+        <button class="btn-mini" id="btnDesmarcarFixas">Desmarcar</button>
+        <button class="btn-mini perigo" id="btnExcluirFixasLote" disabled>🗑️ Excluir</button>
+      </div>
+    </div>
+
+    <div class="grade" id="gradeFixas">
+      <div class="vazio">Nenhuma foto permanente ainda.</div>
+    </div>
+
+    <div class="ajuda-atalhos" style="margin-top: 12px;">
+      As fotos permanentes <strong>nunca saem do telão sozinhas</strong>. Só saem se você clicar em 🗑️.
     </div>
   </div>
 
-  <div class="grade" id="grade">
-    <div class="vazio">Carregando fotos...</div>
+  <!-- ============================================================ -->
+  <!-- ABA: CONFIGURAÇÕES -->
+  <!-- ============================================================ -->
+  <div class="painel-aba" id="painelConfig">
+    <div style="background:#faf7ff;border-radius:14px;padding:18px;margin-bottom:16px;">
+      <h2 style="font-size:16px;color:#4a2c7a;margin-bottom:4px;">⚙️ Limite de envio do público</h2>
+      <p style="font-size:13px;color:#888;margin-bottom:16px;line-height:1.5;">
+        Controla quantas fotos cada dispositivo pode enviar pelo <strong>upload.html</strong>, dentro de uma janela de tempo.
+        As mudanças valem <strong>na hora</strong> para todos que estão com a página aberta.
+      </p>
+
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;">
+        <div>
+          <label style="display:block;font-size:13px;font-weight:600;color:#333;margin-bottom:6px;">
+            Máximo de fotos por janela
+          </label>
+          <input type="number" id="inputMaxFotos" class="input-mini"
+                 min="1" max="50" step="1" value="5"
+                 style="width:100%;padding:12px;font-size:15px;">
+          <div style="font-size:11px;color:#888;margin-top:4px;">Entre 1 e 50 fotos</div>
+        </div>
+        <div>
+          <label style="display:block;font-size:13px;font-weight:600;color:#333;margin-bottom:6px;">
+            Janela de tempo (minutos)
+          </label>
+          <input type="number" id="inputJanelaMin" class="input-mini"
+                 min="1" max="1440" step="1" value="30"
+                 style="width:100%;padding:12px;font-size:15px;">
+          <div style="font-size:11px;color:#888;margin-top:4px;">Entre 1 e 1440 min (24h)</div>
+        </div>
+      </div>
+
+      <div style="display:flex;gap:8px;margin-top:16px;flex-wrap:wrap;">
+        <button class="btn-mini roxo" id="btnSalvarConfig" style="padding:12px 22px;font-size:14px;">
+          💾 Salvar configurações
+        </button>
+        <button class="btn-mini" id="btnRestaurarConfig" style="padding:12px 18px;font-size:14px;">
+          ↺ Restaurar padrão (5 / 30)
+        </button>
+      </div>
+
+      <div id="statusConfig" style="margin-top:12px;font-size:13px;color:#888;min-height:18px;"></div>
+
+      <div style="margin-top:20px;padding-top:16px;border-top:1px solid #e0d6f5;">
+        <div style="font-size:12px;color:#666;line-height:1.6;">
+          <strong>ℹ️ Como funciona:</strong><br>
+          • Cada dispositivo guarda os <em>horários</em> dos envios no navegador.<br>
+          • Quando o número de envios dentro da janela atinge o máximo, o botão trava até o envio mais antigo "expirar".<br>
+          • Ex.: com <strong>5 fotos / 30 min</strong>, a 6ª só libera quando a 1ª completar 30 minutos.
+        </div>
+      </div>
+    </div>
   </div>
 
-  <button class="btn-baixar" id="btnBaixar" disabled>Baixar 0 foto(s) em ZIP</button>
-
-  <div class="barra" id="barra"><div id="barraFill"></div></div>
-  <div class="status" id="status"></div>
   <div class="msg" id="msg"></div>
 
-  <div class="ajuda-atalhos">
+  <div class="ajuda-atalhos" id="ajudaAtalhos">
     Atalhos: <kbd>Espaço</kbd> marcar · <kbd>A</kbd> marcar todas · <kbd>N</kbd> desmarcar · <kbd>D</kbd> baixar ZIP · <kbd>←</kbd><kbd>→</kbd> lightbox · <kbd>Esc</kbd> fechar
   </div>
 </div>
@@ -487,19 +474,17 @@
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
 import {
-  getFirestore, collection, doc, updateDoc, deleteDoc, onSnapshot
+  getFirestore, collection, doc, updateDoc, deleteDoc, onSnapshot, addDoc, setDoc
 } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 
 // ============================================================
-// 🔒 1. SENHA DE ACESSO
+// 🔒 SENHA
 // ============================================================
-const SENHA_MODERADOR = 'kleber'; // 🔧 TROQUE AQUI
+const SENHA_MODERADOR = 'kleber'; // 🔧 TROQUE
 (function protegerAcesso() {
-  // Evita pedir senha a cada F5 (guarda por 4h)
   const CHAVE = 'moderador_autenticado';
   const valido = parseInt(sessionStorage.getItem(CHAVE) || '0');
   if (Date.now() - valido < 4 * 60 * 60 * 1000) return;
-
   const digitada = prompt('🔒 Senha do moderador:');
   if (digitada !== SENHA_MODERADOR) {
     document.body.innerHTML = '<h1 style="color:#fff;text-align:center;padding:60px 20px;font-family:sans-serif;">🚫 Acesso negado</h1>';
@@ -546,6 +531,26 @@ const statusConexao= $('statusConexao');
 const statusTexto  = $('statusTexto');
 const painelDup    = $('painelDup');
 
+const gradeFixas         = $('gradeFixas');
+const zonaUpload         = $('zonaUpload');
+const inputFixa          = $('inputFixa');
+const previewFixa        = $('previewFixa');
+const previewFixaImg     = $('previewFixaImg');
+const previewFixaInfo    = $('previewFixaInfo');
+const btnCancelarFixa    = $('btnCancelarFixa');
+const btnConfirmarFixa   = $('btnConfirmarFixa');
+const btnSelTodasFixas   = $('btnSelTodasFixas');
+const btnDesmarcarFixas  = $('btnDesmarcarFixas');
+const btnExcluirFixasLote= $('btnExcluirFixasLote');
+const contadorFixasSel   = $('contadorFixasSel');
+const contadorFixasTotal = $('contadorFixasTotal');
+
+const inputMaxFotos      = $('inputMaxFotos');
+const inputJanelaMin     = $('inputJanelaMin');
+const btnSalvarConfig    = $('btnSalvarConfig');
+const btnRestaurarConfig = $('btnRestaurarConfig');
+const statusConfig       = $('statusConfig');
+
 const lightbox   = $('lightbox');
 const lbImg      = $('lbImg');
 const lbFechar   = $('lbFechar');
@@ -557,102 +562,124 @@ const lbContador = $('lbContador');
 // 📦 Estado
 // ============================================================
 let fotos = [];
-let fotosVisiveis = []; // após filtros
+let fotosVisiveis = [];
 const selecionadas = new Set();
+
+let fixas = [];
+const fixasSelecionadas = new Set();
+let fotoPendenteFixa = null;
+
 let indiceLightbox = 0;
+let lightboxListaAtual = [];
 let filtroAtual = 'todas';
 let modoCompacto = false;
 let modoLista = false;
 let primeiraCarga = true;
-let unsubscribe = null;
 
 // ============================================================
-// 📡 4. LISTENER COM STATUS DE CONEXÃO
+// 📡 LISTENERS
 // ============================================================
-function marcarOnline() {
-  statusConexao.classList.remove('off');
-  statusTexto.textContent = 'Online';
-}
-function marcarOffline() {
-  statusConexao.classList.add('off');
-  statusTexto.textContent = 'Offline';
-}
+function marcarOnline() { statusConexao.classList.remove('off'); statusTexto.textContent = 'Online'; }
+function marcarOffline() { statusConexao.classList.add('off'); statusTexto.textContent = 'Offline'; }
 
-function iniciarListener() {
-  if (unsubscribe) unsubscribe();
+onSnapshot(collection(db, "slides"),
+  (snapshot) => {
+    marcarOnline();
+    const novas = snapshot.docs.map(d => {
+      const data = d.data();
+      return {
+        id: d.id, url: data.url, nome: data.nome || 'foto.jpg',
+        criadoEm: data.criadoEm || 0,
+        exibicoes: data.exibicoes || 0,
+        ativo: data.ativo !== false
+      };
+    });
+    const idsValidos = new Set(novas.map(f => f.id));
+    for (const id of [...selecionadas]) if (!idsValidos.has(id)) selecionadas.delete(id);
+    if (primeiraCarga) { novas.forEach(f => { if (f.ativo) selecionadas.add(f.id); }); primeiraCarga = false; }
+    fotos = novas;
+    aplicarFiltrosEOrdenar();
+    detectarDuplicatas();
+    renderizarGrade();
+    atualizarEstatisticas();
+  },
+  (err) => { console.error(err); marcarOffline(); mostrarMsg('⚠️ Conexão perdida.', 'err'); }
+);
 
-  marcarOffline();
-  unsubscribe = onSnapshot(
-    collection(db, "slides"),
-    (snapshot) => {
-      marcarOnline();
-      const novas = snapshot.docs.map(d => {
-        const data = d.data();
-        return {
-          id: d.id,
-          url: data.url,
-          nome: data.nome || 'foto.jpg',
-          criadoEm: data.criadoEm || 0,
-          exibicoes: data.exibicoes || 0,
-          ativo: data.ativo !== false
-        };
-      });
+onSnapshot(collection(db, "fixas"),
+  (snapshot) => {
+    fixas = snapshot.docs.map(d => ({
+      id: d.id,
+      url: d.data().url,
+      nome: d.data().nome || 'permanente.jpg',
+      criadoEm: d.data().criadoEm || 0
+    })).sort((a, b) => a.criadoEm - b.criadoEm);
 
-      // Limpa seleção de ids que sumiram
-      const idsValidos = new Set(novas.map(f => f.id));
-      for (const id of [...selecionadas]) {
-        if (!idsValidos.has(id)) selecionadas.delete(id);
-      }
+    const idsValidos = new Set(fixas.map(f => f.id));
+    for (const id of [...fixasSelecionadas]) if (!idsValidos.has(id)) fixasSelecionadas.delete(id);
 
-      if (primeiraCarga) {
-        novas.forEach(f => { if (f.ativo) selecionadas.add(f.id); });
-        primeiraCarga = false;
-      }
+    renderizarFixas();
+    atualizarContadoresFixas();
+    $('qtdAbaFixas').textContent = fixas.length;
+    $('qtdAbaEnviadas').textContent = fotos.length;
+  },
+  (err) => { console.error(err); }
+);
 
-      fotos = novas;
-      aplicarFiltrosEOrdenar();
-      detectarDuplicatas();
-      renderizarGrade();
-      atualizarEstatisticas();
-    },
-    (err) => {
-      console.error(err);
-      marcarOffline();
-      mostrarMsg('⚠️ Conexão perdida. Clique em 🔄 Atualizar.', 'err');
-    }
-  );
-}
+// Config em tempo real
+const CONFIG_REF = doc(db, "config", "apresentacao");
+const CONFIG_PADRAO = { maxFotosPorJanela: 5, janelaMinutos: 30 };
+onSnapshot(CONFIG_REF, (snap) => {
+  if (snap.exists()) {
+    const d = snap.data();
+    inputMaxFotos.value = d.maxFotosPorJanela ?? CONFIG_PADRAO.maxFotosPorJanela;
+    inputJanelaMin.value = d.janelaMinutos ?? CONFIG_PADRAO.janelaMinutos;
+    statusConfig.textContent = `Última atualização: ${new Date(d.atualizadoEm || Date.now()).toLocaleString('pt-BR')}`;
+  } else {
+    inputMaxFotos.value = CONFIG_PADRAO.maxFotosPorJanela;
+    inputJanelaMin.value = CONFIG_PADRAO.janelaMinutos;
+    statusConfig.textContent = 'Nenhuma configuração salva ainda. Usando padrão 5 / 30.';
+  }
+}, (err) => {
+  console.warn('Config listener:', err.message);
+  statusConfig.textContent = 'Não foi possível carregar a configuração.';
+});
 
 // ============================================================
-// 🧮 5-7. FILTROS, DATA E ORDENAÇÃO
+// 🗂️ ABAS
+// ============================================================
+document.querySelectorAll('.aba').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.aba').forEach(b => b.classList.remove('ativa'));
+    document.querySelectorAll('.painel-aba').forEach(p => p.classList.remove('ativo'));
+    btn.classList.add('ativa');
+    $('painel' + btn.dataset.aba.charAt(0).toUpperCase() + btn.dataset.aba.slice(1)).classList.add('ativo');
+    $('ajudaAtalhos').style.display = btn.dataset.aba === 'enviadas' ? '' : 'none';
+  });
+});
+
+// ============================================================
+// 🧮 FILTROS / ORDENAÇÃO
 // ============================================================
 function aplicarFiltrosEOrdenar() {
   let lista = [...fotos];
-
-  // Filtro ativa/inativa
   if (filtroAtual === 'ativas') lista = lista.filter(f => f.ativo);
   if (filtroAtual === 'inativas') lista = lista.filter(f => !f.ativo);
-
-  // Filtro por data (se preenchido)
   if (filtroData.value) {
     const alvo = new Date(filtroData.value + 'T00:00:00').getTime();
-    const fim  = alvo + 24 * 60 * 60 * 1000;
+    const fim = alvo + 24 * 60 * 60 * 1000;
     lista = lista.filter(f => f.criadoEm >= alvo && f.criadoEm < fim);
   }
-
-  // Ordenação
   const ord = ordenacao.value;
   lista.sort((a, b) => {
-    if (ord === 'data-asc')  return a.criadoEm - b.criadoEm;
+    if (ord === 'data-asc') return a.criadoEm - b.criadoEm;
     if (ord === 'data-desc') return b.criadoEm - a.criadoEm;
     if (ord === 'exibicoes') return b.exibicoes - a.exibicoes;
-    if (ord === 'nome')      return a.nome.localeCompare(b.nome);
+    if (ord === 'nome') return a.nome.localeCompare(b.nome);
     return 0;
   });
-
   fotosVisiveis = lista;
 }
-
 document.querySelectorAll('.filtro').forEach(btn => {
   btn.addEventListener('click', () => {
     document.querySelectorAll('.filtro').forEach(b => b.classList.remove('ativo'));
@@ -665,43 +692,40 @@ document.querySelectorAll('.filtro').forEach(btn => {
 filtroData.addEventListener('change', () => { aplicarFiltrosEOrdenar(); renderizarGrade(); });
 ordenacao.addEventListener('change', () => { aplicarFiltrosEOrdenar(); renderizarGrade(); });
 
-// ============================================================
-// 🔁 13. DETECÇÃO DE DUPLICATAS
-// ============================================================
 function detectarDuplicatas() {
   const mapa = new Map();
   fotos.forEach(f => {
-    // Usa os últimos 200 chars do base64 como "hash" simples
     const chave = f.url.length > 200 ? f.url.slice(-200) : f.url;
     if (!mapa.has(chave)) mapa.set(chave, []);
     mapa.get(chave).push(f);
   });
   const grupos = [...mapa.values()].filter(g => g.length > 1);
-
   if (grupos.length === 0) {
     painelDup.classList.remove('ativo');
     painelDup.textContent = '';
   } else {
     const totalDup = grupos.reduce((s, g) => s + g.length, 0);
     painelDup.classList.add('ativo');
-    painelDup.innerHTML = `⚠️ <strong>${grupos.length} grupo(s) de fotos possivelmente duplicadas</strong> (${totalDup} fotos). Elas estão marcadas com <span style="background:#f59e0b;color:#fff;padding:1px 6px;border-radius:4px;font-size:11px;">dup</span> na grade.`;
+    painelDup.innerHTML = `⚠️ <strong>${grupos.length} grupo(s) de fotos possivelmente duplicadas</strong> (${totalDup} fotos).`;
   }
 }
 
 // ============================================================
-// 🎨 RENDERIZAÇÃO
+// 🎨 RENDER — ENVIADAS
 // ============================================================
+function escaparHtml(s) {
+  return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
 function renderizarGrade() {
   if (fotosVisiveis.length === 0) {
-    grade.innerHTML = `<div class="vazio">${fotos.length === 0 ? 'Nenhuma foto encontrada.' : 'Nenhuma foto com este filtro.'}</div>`;
+    grade.innerHTML = `<div class="vazio">${fotos.length === 0 ? 'Nenhuma foto enviada ainda.' : 'Nenhuma foto com este filtro.'}</div>`;
     return;
   }
-
   const scrollTop = grade.scrollTop;
   grade.innerHTML = '';
   grade.className = 'grade' + (modoCompacto ? ' compacta' : '') + (modoLista ? ' lista' : '');
 
-  // Mapa de duplicatas
   const mapaDup = new Map();
   fotos.forEach(f => {
     const chave = f.url.length > 200 ? f.url.slice(-200) : f.url;
@@ -716,12 +740,9 @@ function renderizarGrade() {
       (foto.ativo ? '' : ' inativa');
     div.dataset.id = foto.id;
 
-    // ---- 2. IMG com fallback ----
     const img = document.createElement('img');
-    img.src = foto.url;
-    img.alt = foto.nome;
-    img.loading = 'lazy';
-    img.addEventListener('click', () => abrirLightbox(idx));
+    img.src = foto.url; img.alt = foto.nome; img.loading = 'lazy';
+    img.addEventListener('click', () => abrirLightbox(fotosVisiveis, idx));
     img.addEventListener('error', () => {
       img.style.display = 'none';
       if (!div.querySelector('.img-erro')) {
@@ -734,7 +755,6 @@ function renderizarGrade() {
     });
 
     if (modoLista) {
-      // Modo lista: layout linear
       const info = document.createElement('div');
       info.className = 'info-lista';
       const data = new Date(foto.criadoEm).toLocaleString('pt-BR');
@@ -742,49 +762,41 @@ function renderizarGrade() {
         <div class="nome">${escaparHtml(foto.nome)}</div>
         <div class="meta">${data} · ${foto.exibicoes}x · ${foto.ativo ? '✅ ativa' : '⏸️ inativa'}${duplicada ? ' · ⚠️ dup' : ''}</div>
       `;
-      div.appendChild(img);
-      div.appendChild(info);
-
+      div.appendChild(img); div.appendChild(info);
       const acoes = document.createElement('div');
       acoes.className = 'acoes-lista';
-      acoes.appendChild(criarCheck(foto));
+      acoes.appendChild(criarCheck(foto, selecionadas, atualizarEstatisticas));
       acoes.appendChild(criarToggle(foto, div));
-      acoes.appendChild(criarReset(foto, div));
+      acoes.appendChild(criarReset(foto));
       acoes.appendChild(criarExcluir(foto, div));
       div.appendChild(acoes);
     } else {
-      // Modo grade: layout sobreposto
       div.appendChild(img);
-      div.appendChild(criarCheck(foto));
-
+      div.appendChild(criarCheck(foto, selecionadas, atualizarEstatisticas));
       const badge = document.createElement('div');
       badge.className = 'badge' + (foto.ativo ? '' : ' inativa') + (duplicada && foto.ativo ? ' duplicada' : '');
       badge.textContent = duplicada && foto.ativo ? 'dup' : (foto.ativo ? (foto.exibicoes + 'x') : 'inativa');
       div.appendChild(badge);
-
       div.appendChild(criarToggle(foto, div));
-      div.appendChild(criarReset(foto, div));
+      div.appendChild(criarReset(foto));
       div.appendChild(criarExcluir(foto, div));
     }
-
     grade.appendChild(div);
   });
-
   grade.scrollTop = scrollTop;
 }
 
-function escaparHtml(s) {
-  return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-}
-
-function criarCheck(foto) {
+function criarCheck(foto, set, onUpdate) {
   const el = document.createElement('div');
   el.className = 'check';
   el.textContent = '✓';
-  el.title = 'Selecionar para ZIP';
+  el.title = 'Selecionar';
   el.addEventListener('click', (e) => {
     e.stopPropagation();
-    alternarSelecao(foto.id);
+    if (set.has(foto.id)) set.delete(foto.id); else set.add(foto.id);
+    const card = el.closest('.foto');
+    if (card) card.classList.toggle('selecionada', set.has(foto.id));
+    onUpdate();
   });
   return el;
 }
@@ -794,31 +806,37 @@ function criarToggle(foto, cardEl) {
   btn.className = 'btn-toggle' + (foto.ativo ? '' : ' inativa');
   btn.textContent = '⏻';
   btn.title = foto.ativo ? 'Desativar' : 'Ativar';
-  btn.addEventListener('click', (e) => {
+  btn.addEventListener('click', async (e) => {
     e.stopPropagation();
-    alternarAtivo(foto, btn, cardEl);
+    btn.disabled = true;
+    const overlay = document.createElement('div');
+    overlay.className = 'loading-toggle';
+    overlay.innerHTML = '<div class="spinner"></div>';
+    cardEl.appendChild(overlay);
+    try {
+      await updateDoc(doc(db, "slides", foto.id), { ativo: !foto.ativo });
+      mostrarMsg(!foto.ativo ? '⏸️ Desativada.' : '✅ Reativada.', 'ok');
+    } catch (err) {
+      console.error(err);
+      mostrarMsg('Erro: ' + err.message, 'err');
+      btn.disabled = false;
+    } finally { overlay.remove(); }
   });
   return btn;
 }
 
-function criarReset(foto, cardEl) {
+function criarReset(foto) {
   const btn = document.createElement('button');
   btn.className = 'btn-reset';
   btn.textContent = '🔄';
   btn.title = 'Resetar exibições e reativar';
   btn.addEventListener('click', async (e) => {
     e.stopPropagation();
-    if (!confirm(`Resetar "${foto.nome}"?\nExibições voltarão a 0 e a foto será reativada.`)) return;
-    btn.disabled = true;
+    if (!confirm(`Resetar "${foto.nome}"?`)) return;
     try {
       await updateDoc(doc(db, "slides", foto.id), { exibicoes: 0, ativo: true });
-      mostrarMsg('🔄 Foto resetada.', 'ok');
-    } catch (err) {
-      console.error(err);
-      mostrarMsg('Erro ao resetar: ' + err.message, 'err');
-    } finally {
-      btn.disabled = false;
-    }
+      mostrarMsg('🔄 Resetada.', 'ok');
+    } catch (err) { mostrarMsg('Erro: ' + err.message, 'err'); }
   });
   return btn;
 }
@@ -827,58 +845,25 @@ function criarExcluir(foto, cardEl) {
   const btn = document.createElement('button');
   btn.className = 'btn-excluir';
   btn.textContent = '🗑';
-  btn.title = 'Excluir permanentemente';
-  btn.addEventListener('click', (e) => {
+  btn.title = 'Excluir';
+  btn.addEventListener('click', async (e) => {
     e.stopPropagation();
-    excluirFoto(foto, cardEl);
+    if (!confirm(`Excluir "${foto.nome}" permanentemente?`)) return;
+    cardEl.style.opacity = '0.4';
+    cardEl.style.pointerEvents = 'none';
+    try {
+      await deleteDoc(doc(db, "slides", foto.id));
+      mostrarMsg('🗑️ Excluída.', 'ok');
+    } catch (err) {
+      cardEl.style.opacity = '1'; cardEl.style.pointerEvents = '';
+      mostrarMsg('Erro: ' + err.message, 'err');
+    }
   });
   return btn;
 }
 
 // ============================================================
-// 🔁 TOGGLE ATIVA/INATIVA
-// ============================================================
-async function alternarAtivo(foto, botao, cardEl) {
-  const novoStatus = !foto.ativo;
-  botao.disabled = true;
-  const overlay = document.createElement('div');
-  overlay.className = 'loading-toggle';
-  overlay.innerHTML = '<div class="spinner"></div>';
-  cardEl.appendChild(overlay);
-
-  try {
-    await updateDoc(doc(db, "slides", foto.id), { ativo: novoStatus });
-    mostrarMsg(novoStatus ? '✅ Foto reativada.' : '⏸️ Foto desativada.', 'ok');
-  } catch (err) {
-    console.error(err);
-    mostrarMsg('Erro ao atualizar: ' + err.message, 'err');
-    botao.disabled = false;
-  } finally {
-    overlay.remove();
-  }
-}
-
-// ============================================================
-// 🗑️ 9. EXCLUIR
-// ============================================================
-async function excluirFoto(foto, cardEl) {
-  if (!confirm(`Excluir permanentemente "${foto.nome}"?\nEssa ação NÃO pode ser desfeita.`)) return;
-
-  cardEl.style.opacity = '0.4';
-  cardEl.style.pointerEvents = 'none';
-  try {
-    await deleteDoc(doc(db, "slides", foto.id));
-    mostrarMsg('🗑️ Foto excluída.', 'ok');
-  } catch (err) {
-    console.error(err);
-    cardEl.style.opacity = '1';
-    cardEl.style.pointerEvents = '';
-    mostrarMsg('Erro ao excluir: ' + err.message, 'err');
-  }
-}
-
-// ============================================================
-// 📊 12. ESTATÍSTICAS
+// 📊 ESTATÍSTICAS
 // ============================================================
 function atualizarEstatisticas() {
   $('statTotal').textContent = fotos.length;
@@ -886,184 +871,349 @@ function atualizarEstatisticas() {
   $('statInativas').textContent = fotos.filter(f => !f.ativo).length;
   $('statExibicoes').textContent = fotos.reduce((s, f) => s + f.exibicoes, 0);
   $('statSel').textContent = selecionadas.size;
-
   const qtdSel = selecionadas.size;
   btnBaixar.disabled = qtdSel === 0;
   btnBaixar.textContent = `Baixar ${qtdSel} foto(s) em ZIP`;
   btnAtivarL.disabled = qtdSel === 0;
   btnDesativarL.disabled = qtdSel === 0;
   btnExcluirL.disabled = qtdSel === 0;
-}
-
-// ============================================================
-// ✅ SELEÇÃO
-// ============================================================
-function alternarSelecao(id) {
-  if (selecionadas.has(id)) selecionadas.delete(id);
-  else selecionadas.add(id);
-
-  const el = grade.querySelector(`.foto[data-id="${id}"]`);
-  if (el) el.classList.toggle('selecionada', selecionadas.has(id));
-  atualizarEstatisticas();
+  $('qtdAbaEnviadas').textContent = fotos.length;
 }
 
 btnTodas.addEventListener('click', () => {
   fotosVisiveis.forEach(f => selecionadas.add(f.id));
-  document.querySelectorAll('.foto').forEach(el => el.classList.add('selecionada'));
+  document.querySelectorAll('#grade .foto').forEach(el => el.classList.add('selecionada'));
   atualizarEstatisticas();
 });
 btnNenhuma.addEventListener('click', () => {
   selecionadas.clear();
-  document.querySelectorAll('.foto').forEach(el => el.classList.remove('selecionada'));
+  document.querySelectorAll('#grade .foto').forEach(el => el.classList.remove('selecionada'));
   atualizarEstatisticas();
 });
 
-// ============================================================
-// 📦 8. AÇÕES EM LOTE
-// ============================================================
+// Lotes
 btnAtivarL.addEventListener('click', () => loteAtivo(true));
 btnDesativarL.addEventListener('click', () => loteAtivo(false));
-
 async function loteAtivo(ativo) {
   const ids = [...selecionadas];
-  if (ids.length === 0) return;
+  if (!ids.length) return;
   if (!confirm(`${ativo ? 'Ativar' : 'Desativar'} ${ids.length} foto(s)?`)) return;
-
-  btnAtivarL.disabled = btnDesativarL.disabled = btnExcluirL.disabled = true;
   try {
-    // Processa em lotes de 20 para não estourar
     for (let i = 0; i < ids.length; i += 20) {
-      const fatia = ids.slice(i, i + 20);
-      await Promise.all(fatia.map(id =>
-        updateDoc(doc(db, "slides", id), { ativo })
-      ));
+      await Promise.all(ids.slice(i, i + 20).map(id => updateDoc(doc(db, "slides", id), { ativo })));
     }
-    mostrarMsg(`✅ ${ids.length} foto(s) ${ativo ? 'ativadas' : 'desativadas'}.`, 'ok');
-  } catch (err) {
-    console.error(err);
-    mostrarMsg('Erro no lote: ' + err.message, 'err');
-  } finally {
-    atualizarEstatisticas();
-  }
+    mostrarMsg(`✅ ${ids.length} atualizada(s).`, 'ok');
+  } catch (err) { mostrarMsg('Erro: ' + err.message, 'err'); }
 }
-
 btnExcluirL.addEventListener('click', async () => {
   const ids = [...selecionadas];
-  if (ids.length === 0) return;
-  if (!confirm(`🗑️ Excluir PERMANENTEMENTE ${ids.length} foto(s)?\nEssa ação NÃO pode ser desfeita.`)) return;
-
-  btnAtivarL.disabled = btnDesativarL.disabled = btnExcluirL.disabled = true;
+  if (!ids.length) return;
+  if (!confirm(`🗑️ Excluir ${ids.length} foto(s)?`)) return;
   let ok = 0, fail = 0;
   for (const id of ids) {
-    try {
-      await deleteDoc(doc(db, "slides", id));
-      ok++;
-    } catch (e) {
-      fail++;
-      console.warn(e);
-    }
+    try { await deleteDoc(doc(db, "slides", id)); ok++; }
+    catch { fail++; }
   }
   mostrarMsg(`🗑️ ${ok} excluída(s)${fail ? `, ${fail} erro(s)` : ''}.`, fail ? 'err' : 'ok');
-  atualizarEstatisticas();
 });
 
-// ============================================================
-// 🔄 3. ATUALIZAR (forçar reload)
-// ============================================================
-btnAtualizar.addEventListener('click', () => {
-  mostrarMsg('🔄 Recarregando...', 'info');
-  setTimeout(() => location.reload(), 300);
-});
+btnAtualizar.addEventListener('click', () => { mostrarMsg('🔄 Recarregando...', 'info'); setTimeout(() => location.reload(), 300); });
 
-// ============================================================
-// 🔲 17. MODO COMPACTO / LISTA
-// ============================================================
 btnCompacto.addEventListener('click', () => {
-  if (!modoCompacto && !modoLista) {
-    modoCompacto = true;
-    btnCompacto.textContent = '📋 Lista';
-  } else if (modoCompacto) {
-    modoCompacto = false;
-    modoLista = true;
-    btnCompacto.textContent = '🔲 Normal';
-  } else {
-    modoLista = false;
-    btnCompacto.textContent = '🔲 Compacto';
-  }
+  if (!modoCompacto && !modoLista) { modoCompacto = true; btnCompacto.textContent = '📋 Lista'; }
+  else if (modoCompacto) { modoCompacto = false; modoLista = true; btnCompacto.textContent = '🔲 Normal'; }
+  else { modoLista = false; btnCompacto.textContent = '🔲 Compacto'; }
   renderizarGrade();
 });
 
-// ============================================================
-// 📄 15. EXPORT CSV
-// ============================================================
 btnExportCSV.addEventListener('click', () => {
-  const linhas = [['id', 'nome', 'criadoEm', 'exibicoes', 'ativo', 'tamanhoBytes']];
-  fotos.forEach(f => linhas.push([
-    f.id,
-    '"' + f.nome.replace(/"/g, '""') + '"',
-    new Date(f.criadoEm).toISOString(),
-    f.exibicoes,
-    f.ativo ? 'sim' : 'nao',
-    '' // tamanho não está no doc; deixei vazio
-  ]));
+  const linhas = [['id', 'nome', 'criadoEm', 'exibicoes', 'ativo']];
+  fotos.forEach(f => linhas.push([f.id, '"' + f.nome.replace(/"/g, '""') + '"', new Date(f.criadoEm).toISOString(), f.exibicoes, f.ativo ? 'sim' : 'nao']));
   const csv = '\uFEFF' + linhas.map(l => l.join(',')).join('\n');
   const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' });
   const link = document.createElement('a');
   link.href = URL.createObjectURL(blob);
-  link.download = `relatorio-fotos-${new Date().toISOString().slice(0,10)}.csv`;
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
+  link.download = `relatorio-enviadas-${new Date().toISOString().slice(0,10)}.csv`;
+  document.body.appendChild(link); link.click(); document.body.removeChild(link);
   setTimeout(() => URL.revokeObjectURL(link.href), 5000);
   mostrarMsg('📄 CSV exportado.', 'ok');
 });
 
 // ============================================================
+// 📌 FIXAS — UPLOAD
+// ============================================================
+const LIMITE_BYTES_FIXA = 900 * 1024;
+
+async function comprimirParaBase64(file) {
+  const bitmap = await createImageBitmap(file).catch(() => new Promise((resolve, reject) => {
+    const img = new Image();
+    img.onload = () => resolve(img);
+    img.onerror = reject;
+    img.src = URL.createObjectURL(file);
+  }));
+  const tentativas = [
+    { maxLado: 1600, qualidade: 0.82 },
+    { maxLado: 1280, qualidade: 0.75 },
+    { maxLado: 1000, qualidade: 0.65 },
+    { maxLado: 800, qualidade: 0.6 }
+  ];
+  let ultimo = null;
+  for (const t of tentativas) {
+    const escala = Math.min(1, t.maxLado / Math.max(bitmap.width, bitmap.height));
+    const w = Math.round(bitmap.width * escala);
+    const h = Math.round(bitmap.height * escala);
+    const canvas = document.createElement('canvas');
+    canvas.width = w; canvas.height = h;
+    canvas.getContext('2d').drawImage(bitmap, 0, 0, w, h);
+    const dataURL = canvas.toDataURL('image/jpeg', t.qualidade);
+    const bytes = Math.ceil((dataURL.length - dataURL.indexOf(',') - 1) * 0.75);
+    ultimo = { dataURL, bytes };
+    if (bytes <= LIMITE_BYTES_FIXA) return ultimo;
+  }
+  return ultimo;
+}
+
+zonaUpload.addEventListener('click', () => inputFixa.click());
+zonaUpload.addEventListener('dragover', (e) => { e.preventDefault(); zonaUpload.classList.add('arrastando'); });
+zonaUpload.addEventListener('dragleave', () => zonaUpload.classList.remove('arrastando'));
+zonaUpload.addEventListener('drop', (e) => {
+  e.preventDefault();
+  zonaUpload.classList.remove('arrastando');
+  if (e.dataTransfer.files.length) processarFixa(e.dataTransfer.files[0]);
+});
+
+inputFixa.addEventListener('change', (e) => {
+  if (e.target.files.length) processarFixa(e.target.files[0]);
+  e.target.value = '';
+});
+
+async function processarFixa(file) {
+  if (!file.type.startsWith('image/')) { mostrarMsg('Apenas imagens.', 'err'); return; }
+  mostrarMsg('Processando...', 'info');
+  try {
+    const { dataURL, bytes } = await comprimirParaBase64(file);
+    fotoPendenteFixa = { file, dataURL, bytes };
+    previewFixaImg.src = dataURL;
+    previewFixaInfo.innerHTML = `${formatarTamanho(file.size)} → <strong>${formatarTamanho(bytes)}</strong>`;
+    previewFixa.classList.add('ativo');
+    zonaUpload.style.display = 'none';
+    esconderMsg();
+  } catch (err) {
+    console.error(err);
+    mostrarMsg('Falha ao processar.', 'err');
+  }
+}
+
+function formatarTamanho(bytes) {
+  if (bytes < 1024) return bytes + ' B';
+  if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(0) + ' KB';
+  return (bytes / 1024 / 1024).toFixed(2) + ' MB';
+}
+
+btnCancelarFixa.addEventListener('click', () => {
+  fotoPendenteFixa = null;
+  previewFixa.classList.remove('ativo');
+  previewFixaImg.src = '';
+  zonaUpload.style.display = '';
+  esconderMsg();
+});
+
+btnConfirmarFixa.addEventListener('click', async () => {
+  if (!fotoPendenteFixa) return;
+  btnConfirmarFixa.disabled = true;
+  btnConfirmarFixa.innerHTML = '<span class="spinner-inline"></span>Enviando...';
+  try {
+    await addDoc(collection(db, "fixas"), {
+      url: fotoPendenteFixa.dataURL,
+      nome: fotoPendenteFixa.file.name || 'permanente.jpg',
+      criadoEm: Date.now(),
+      tamanho: fotoPendenteFixa.bytes
+    });
+    mostrarMsg('✅ Foto permanente adicionada!', 'ok');
+    btnCancelarFixa.click();
+  } catch (err) {
+    console.error(err);
+    mostrarMsg('Erro ao enviar: ' + err.message, 'err');
+  } finally {
+    btnConfirmarFixa.disabled = false;
+    btnConfirmarFixa.innerHTML = '✅ Adicionar à apresentação';
+  }
+});
+
+// ============================================================
+// 📌 FIXAS — GRADE
+// ============================================================
+function renderizarFixas() {
+  if (fixas.length === 0) {
+    gradeFixas.innerHTML = '<div class="vazio">Nenhuma foto permanente ainda. Adicione acima ☝️</div>';
+    return;
+  }
+  gradeFixas.innerHTML = '';
+  gradeFixas.className = 'grade';
+  fixas.forEach((foto, idx) => {
+    const div = document.createElement('div');
+    div.className = 'foto' + (fixasSelecionadas.has(foto.id) ? ' selecionada' : '');
+    div.dataset.id = foto.id;
+
+    const img = document.createElement('img');
+    img.src = foto.url; img.alt = foto.nome; img.loading = 'lazy';
+    img.addEventListener('click', () => abrirLightbox(fixas, idx));
+
+    const check = document.createElement('div');
+    check.className = 'check';
+    check.textContent = '✓';
+    check.title = 'Selecionar';
+    check.addEventListener('click', (e) => {
+      e.stopPropagation();
+      if (fixasSelecionadas.has(foto.id)) fixasSelecionadas.delete(foto.id);
+      else fixasSelecionadas.add(foto.id);
+      div.classList.toggle('selecionada', fixasSelecionadas.has(foto.id));
+      atualizarContadoresFixas();
+    });
+
+    const badge = document.createElement('div');
+    badge.className = 'badge fixa';
+    badge.textContent = '📌 permanente';
+
+    const btnExcluir = document.createElement('button');
+    btnExcluir.className = 'btn-excluir';
+    btnExcluir.textContent = '🗑';
+    btnExcluir.title = 'Remover da apresentação';
+    btnExcluir.style.opacity = '1';
+    btnExcluir.addEventListener('click', async (e) => {
+      e.stopPropagation();
+      if (!confirm(`Remover "${foto.nome}" da apresentação?\nEla deixará de aparecer no telão.`)) return;
+      div.style.opacity = '0.4';
+      div.style.pointerEvents = 'none';
+      try {
+        await deleteDoc(doc(db, "fixas", foto.id));
+        mostrarMsg('🗑️ Foto permanente removida.', 'ok');
+      } catch (err) {
+        div.style.opacity = '1'; div.style.pointerEvents = '';
+        mostrarMsg('Erro: ' + err.message, 'err');
+      }
+    });
+
+    div.appendChild(img);
+    div.appendChild(check);
+    div.appendChild(badge);
+    div.appendChild(btnExcluir);
+    gradeFixas.appendChild(div);
+  });
+}
+
+function atualizarContadoresFixas() {
+  $('statFixasTotal').textContent = fixas.length;
+  $('statFixasSel').textContent = fixasSelecionadas.size;
+  contadorFixasSel.textContent = fixasSelecionadas.size;
+  contadorFixasTotal.textContent = fixas.length;
+  btnExcluirFixasLote.disabled = fixasSelecionadas.size === 0;
+}
+
+btnSelTodasFixas.addEventListener('click', () => {
+  fixas.forEach(f => fixasSelecionadas.add(f.id));
+  document.querySelectorAll('#gradeFixas .foto').forEach(el => el.classList.add('selecionada'));
+  atualizarContadoresFixas();
+});
+btnDesmarcarFixas.addEventListener('click', () => {
+  fixasSelecionadas.clear();
+  document.querySelectorAll('#gradeFixas .foto').forEach(el => el.classList.remove('selecionada'));
+  atualizarContadoresFixas();
+});
+btnExcluirFixasLote.addEventListener('click', async () => {
+  const ids = [...fixasSelecionadas];
+  if (!ids.length) return;
+  if (!confirm(`🗑️ Remover ${ids.length} foto(s) permanente(s)?`)) return;
+  let ok = 0, fail = 0;
+  for (const id of ids) {
+    try { await deleteDoc(doc(db, "fixas", id)); ok++; }
+    catch { fail++; }
+  }
+  mostrarMsg(`🗑️ ${ok} removida(s)${fail ? `, ${fail} erro(s)` : ''}.`, fail ? 'err' : 'ok');
+});
+
+// ============================================================
+// ⚙️ CONFIGURAÇÕES
+// ============================================================
+btnSalvarConfig.addEventListener('click', async () => {
+  const max = parseInt(inputMaxFotos.value);
+  const min = parseInt(inputJanelaMin.value);
+  if (!Number.isFinite(max) || max < 1 || max > 50) {
+    mostrarMsg('Máximo de fotos deve ser entre 1 e 50.', 'err');
+    return;
+  }
+  if (!Number.isFinite(min) || min < 1 || min > 1440) {
+    mostrarMsg('Janela deve ser entre 1 e 1440 minutos.', 'err');
+    return;
+  }
+  btnSalvarConfig.disabled = true;
+  btnSalvarConfig.innerHTML = '<span class="spinner-inline"></span>Salvando...';
+  try {
+    await setDoc(CONFIG_REF, {
+      maxFotosPorJanela: max,
+      janelaMinutos: min,
+      atualizadoEm: Date.now()
+    }, { merge: true });
+    mostrarMsg(`✅ Configuração salva: ${max} foto(s) por ${min} min.`, 'ok');
+  } catch (err) {
+    console.error(err);
+    mostrarMsg('Erro ao salvar: ' + err.message, 'err');
+  } finally {
+    btnSalvarConfig.disabled = false;
+    btnSalvarConfig.innerHTML = '💾 Salvar configurações';
+  }
+});
+
+btnRestaurarConfig.addEventListener('click', async () => {
+  if (!confirm('Restaurar padrão: 5 fotos por 30 minutos?')) return;
+  inputMaxFotos.value = CONFIG_PADRAO.maxFotosPorJanela;
+  inputJanelaMin.value = CONFIG_PADRAO.janelaMinutos;
+  btnSalvarConfig.click();
+});
+
+// ============================================================
 // 🔍 LIGHTBOX
 // ============================================================
-function abrirLightbox(idx) {
+function abrirLightbox(lista, idx) {
+  lightboxListaAtual = lista;
   indiceLightbox = idx;
   atualizarLightbox();
   lightbox.classList.add('ativo');
 }
 function atualizarLightbox() {
-  const foto = fotosVisiveis[indiceLightbox];
+  const foto = lightboxListaAtual[indiceLightbox];
   if (!foto) return;
   lbImg.src = foto.url;
-  lbContador.textContent = `${indiceLightbox + 1} / ${fotosVisiveis.length}`;
+  lbContador.textContent = `${indiceLightbox + 1} / ${lightboxListaAtual.length}`;
   lbAnterior.disabled = indiceLightbox === 0;
-  lbProximo.disabled = indiceLightbox === fotosVisiveis.length - 1;
+  lbProximo.disabled = indiceLightbox === lightboxListaAtual.length - 1;
 }
-function fecharLightbox() {
-  lightbox.classList.remove('ativo');
-  lbImg.src = '';
-}
+function fecharLightbox() { lightbox.classList.remove('ativo'); lbImg.src = ''; }
 lbFechar.addEventListener('click', fecharLightbox);
 lbAnterior.addEventListener('click', () => { if (indiceLightbox > 0) { indiceLightbox--; atualizarLightbox(); } });
-lbProximo.addEventListener('click', () => { if (indiceLightbox < fotosVisiveis.length - 1) { indiceLightbox++; atualizarLightbox(); } });
+lbProximo.addEventListener('click', () => { if (indiceLightbox < lightboxListaAtual.length - 1) { indiceLightbox++; atualizarLightbox(); } });
 lightbox.addEventListener('click', (e) => { if (e.target === lightbox) fecharLightbox(); });
 
-// ============================================================
-// ⌨️ 11. ATALHOS DE TECLADO
-// ============================================================
 document.addEventListener('keydown', (e) => {
-  // Ignora se está digitando em input
   const tag = (e.target.tagName || '').toLowerCase();
   if (tag === 'input' || tag === 'select' || tag === 'textarea') return;
-
-  // Lightbox aberto: só navegação
   if (lightbox.classList.contains('ativo')) {
     if (e.key === 'Escape') fecharLightbox();
     if (e.key === 'ArrowLeft' && indiceLightbox > 0) { indiceLightbox--; atualizarLightbox(); }
-    if (e.key === 'ArrowRight' && indiceLightbox < fotosVisiveis.length - 1) { indiceLightbox++; atualizarLightbox(); }
+    if (e.key === 'ArrowRight' && indiceLightbox < lightboxListaAtual.length - 1) { indiceLightbox++; atualizarLightbox(); }
     return;
   }
-
+  const abaEnviadasAtiva = document.querySelector('.aba.ativa')?.dataset.aba === 'enviadas';
+  if (!abaEnviadasAtiva) return;
   if (e.code === 'Space') {
     e.preventDefault();
-    // Alterna seleção do último card focado (ou do primeiro)
-    const cardFocado = document.querySelector('.foto:focus-within') || grade.querySelector('.foto');
-    if (cardFocado) alternarSelecao(cardFocado.dataset.id);
+    const card = document.querySelector('.foto:focus-within') || grade.querySelector('.foto');
+    if (card) {
+      const id = card.dataset.id;
+      if (selecionadas.has(id)) selecionadas.delete(id); else selecionadas.add(id);
+      card.classList.toggle('selecionada', selecionadas.has(id));
+      atualizarEstatisticas();
+    }
   }
   if (e.key === 'a' || e.key === 'A') btnTodas.click();
   if (e.key === 'n' || e.key === 'N') btnNenhuma.click();
@@ -1071,7 +1221,7 @@ document.addEventListener('keydown', (e) => {
 });
 
 // ============================================================
-// 📥 DOWNLOAD ZIP (igual, só respeita filtros)
+// 📥 ZIP
 // ============================================================
 async function urlParaBlob(url) {
   if (url.startsWith('data:')) {
@@ -1102,19 +1252,14 @@ function nomeArquivo(foto, index) {
 
 btnBaixar.addEventListener('click', async () => {
   const lista = fotos.filter(f => selecionadas.has(f.id));
-  if (lista.length === 0) return;
-
+  if (!lista.length) return;
   btnBaixar.disabled = true;
   btnBaixar.innerHTML = '<span class="spinner-inline"></span>Preparando ZIP...';
-  barra.classList.add('ativa');
-  barraFill.style.width = '0%';
-  statusEl.textContent = '';
-  esconderMsg();
-
+  barra.classList.add('ativa'); barraFill.style.width = '0%';
+  statusEl.textContent = ''; esconderMsg();
   try {
     const zip = new JSZip();
-    const pasta = zip.folder('fotos-apresentacao');
-
+    const pasta = zip.folder('fotos-enviadas');
     for (let i = 0; i < lista.length; i++) {
       const foto = lista[i];
       try {
@@ -1122,47 +1267,30 @@ btnBaixar.addEventListener('click', async () => {
         pasta.file(nomeArquivo(foto, i), blob);
         statusEl.textContent = `Baixando ${i + 1} de ${lista.length}...`;
       } catch (e) {
-        console.warn('Falha em uma foto:', foto.id, e);
-        pasta.file('ERRO_' + foto.id + '.txt', 'Não foi possível baixar: ' + foto.url);
+        pasta.file('ERRO_' + foto.id + '.txt', 'Falhou: ' + foto.url);
       }
       barraFill.style.width = Math.round(((i + 1) / lista.length) * 100) + '%';
     }
-
-    // CSV junto do ZIP
     const csvLinhas = [['id','nome','criadoEm','exibicoes','ativo']];
-    lista.forEach(f => csvLinhas.push([
-      f.id,
-      '"' + f.nome.replace(/"/g, '""') + '"',
-      new Date(f.criadoEm).toISOString(),
-      f.exibicoes,
-      f.ativo ? 'sim' : 'nao'
-    ]));
+    lista.forEach(f => csvLinhas.push([f.id, '"' + f.nome.replace(/"/g, '""') + '"', new Date(f.criadoEm).toISOString(), f.exibicoes, f.ativo ? 'sim' : 'nao']));
     pasta.file('relatorio.csv', '\uFEFF' + csvLinhas.map(l => l.join(',')).join('\n'));
 
-    statusEl.textContent = 'Gerando arquivo ZIP...';
+    statusEl.textContent = 'Gerando ZIP...';
     const conteudo = await zip.generateAsync(
       { type: 'blob', compression: 'DEFLATE', compressionOptions: { level: 6 } },
-      (meta) => {
-        barraFill.style.width = Math.round(meta.percent) + '%';
-        statusEl.textContent = `Compactando... ${Math.round(meta.percent)}%`;
-      }
+      (meta) => { barraFill.style.width = Math.round(meta.percent) + '%'; statusEl.textContent = `Compactando... ${Math.round(meta.percent)}%`; }
     );
-
-    const nomeZip = `fotos-apresentacao-${new Date().toISOString().slice(0,10)}.zip`;
+    const nomeZip = `fotos-enviadas-${new Date().toISOString().slice(0,10)}.zip`;
     const link = document.createElement('a');
     link.href = URL.createObjectURL(conteudo);
     link.download = nomeZip;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+    document.body.appendChild(link); link.click(); document.body.removeChild(link);
     setTimeout(() => URL.revokeObjectURL(link.href), 10000);
-
-    statusEl.textContent = `✅ ${nomeZip} (${lista.length} foto(s))`;
+    statusEl.textContent = `✅ ${nomeZip}`;
     mostrarMsg('Download concluído!', 'ok');
   } catch (err) {
     console.error(err);
-    statusEl.textContent = '';
-    mostrarMsg('Erro ao gerar ZIP: ' + err.message, 'err');
+    mostrarMsg('Erro: ' + err.message, 'err');
   } finally {
     btnBaixar.innerHTML = `Baixar ${selecionadas.size} foto(s) em ZIP`;
     atualizarEstatisticas();
@@ -1176,18 +1304,6 @@ function mostrarMsg(texto, tipo) {
   if (tipo === 'ok' || tipo === 'info') setTimeout(esconderMsg, 3500);
 }
 function esconderMsg() { msg.className = 'msg'; }
-
-// ============================================================
-// 🚀 INICIALIZAÇÃO
-// ============================================================
-iniciarListener();
-
-// Reconecta se a aba voltar a ficar visível
-document.addEventListener('visibilitychange', () => {
-  if (document.visibilityState === 'visible' && !unsubscribe) {
-    iniciarListener();
-  }
-});
 </script>
 </body>
 </html>
